@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -35,6 +37,50 @@ public final class Constants {
 
   public static final class DriveConstants {
     public static final double kTrackWidth = Units.inchesToMeters(0.0);
+    public static final double kWheelBase = Units.inchesToMeters(0.0);
+    
+    public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
+      new Translation2d(kWheelBase / 2, kTrackWidth / 2), // Front Left
+      new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // Front Right
+      new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // Back Left
+      new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // Back Right
+      
+      // Driving Motor Ports
+      public static final int kFrontLeftDriveMotorPort = 0;
+      public static final int kFrontRightDriveMotorPort = 0;
+      public static final int kBackRightDriveMotorPort = 0;
+      public static final int kBackLeftDriveMotorPort = 0;
+        
+      // Turning Motor Ports
+      public static final int kFrontLeftTurningMotorPort = 0;
+      public static final int kFrontRightTurningMotorPort = 0;
+      public static final int kBackRightTurningMotorPort = 0;
+      public static final int kBackLeftTurningMotorPort = 0;
+
+      // Encoder for NEO drive
+      public static final boolean kFrontLeftDriveEncoderReversed = true;
+      public static final boolean kBackLeftDriveEncoderReversed = true;
+      public static final boolean kFrontRightDriveEncoderReversed = true;
+      public static final boolean kBackRightDriveEncoderReversed = true;
+
+      // Encoder on NEO turning
+      public static final boolean kFrontLeftTurningEncoderReversed = true;
+      public static final boolean kBackLeftTurningEncoderReversed = true;
+      public static final boolean kFrontRightTurningEncoderReversed = true;
+      public static final boolean kBackRightTurningEncoderReversed = true;
+
+      // DIO ports on the roboRIO - MagEncoders from swerve module.
+      public static final int kFrontLeftDriveAbsoluteEncoderPort = 0;
+      public static final int kBackLeftDriveAbsoluteEncoderPort = 0;
+      public static final int kFrontRightDriveAbsoluteEncoderPort = 0;
+      public static final int kBackRightDriveAbsoluteEncoderPort = 0;
+
+      // Absolute encoders reversed
+      public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = false;
+      public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;
+      public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
+      public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
+
   }
 
   public static class OperatorConstants {
