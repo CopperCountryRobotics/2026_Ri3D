@@ -81,6 +81,28 @@ public final class Constants {
       public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
       public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
 
+      // Ri3D Competition Robot
+      public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(0.0);
+      public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math
+              .toRadians(0.0);
+      public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math
+              .toRadians(0.0);
+      public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math
+              .toRadians(0.0);
+
+      public static final double kPhysicalMaxSpeedMetersPerSecond = 0.0;
+      public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = Math.toRadians(0.0);
+
+      public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond;
+      public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond;
+      public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 0.0;
+      public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 0.0;
+
+      public static final double kPThetaController = 0.0;
+      public static final double kIThetaController = 0.0;
+      public static final double kDThetaController = 0.0;
+
+      public static final double kMaxDriveMotorTemp = 0.0;      
   }
 
   public static class OperatorConstants {
