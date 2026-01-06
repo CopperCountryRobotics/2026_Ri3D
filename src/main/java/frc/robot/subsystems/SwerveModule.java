@@ -6,6 +6,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.REVLibError;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -21,7 +26,7 @@ public class SwerveModule extends SubsystemBase {
   private RelativeEncoder turningEncoder;
 
   private final PIDController turningPidController;
-  private SparkMaxPIDController builtinTurningPidController;
+  private PIDController builtinTurningPidController;
 
   private final DutyCycleEncoder absoluteEncoder;
 
