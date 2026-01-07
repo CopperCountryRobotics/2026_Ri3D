@@ -37,13 +37,13 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    sw.stopModules();
-    sw.setDefaultCommand(new SwerveJoystick(sw,
-                    () -> -driveController.getLeftY(), // Y-Axis
-                    () -> -driveController.getLeftX(), // X-Axis
-                    () -> -driveController.getRightX(), // R-Axis
-                    () -> fieldOriented // Field oriented -does nothing right now
-    ));
+    // sw.stopModules(); //TODO fix
+    // sw.setDefaultCommand(new SwerveJoystick(sw,
+    //                 () -> -driveController.getLeftY(), // Y-Axis
+    //                 () -> -driveController.getLeftX(), // X-Axis
+    //                 () -> -driveController.getRightX(), // R-Axis
+    //                 () -> fieldOriented // Field oriented -does nothing right now
+    // ));
 
     // Configure the trigger bindings
     configureBindings();

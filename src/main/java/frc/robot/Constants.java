@@ -33,6 +33,8 @@ public final class Constants {
     public static final double kPTurning = 0.0;
     public static final double kITurning = 0.0;
     public static final double kDTurning = 0.0;
+
+    public static final double kDriveEncoderRot2Meter = 1 / (Units.inchesToMeters(4) * Math.PI); //3.132965055;
   }
 
   public static final class DriveConstants {

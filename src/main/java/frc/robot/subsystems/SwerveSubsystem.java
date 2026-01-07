@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+//import com.kauailabs.navx.frc.AHRS; //TODO fix
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -61,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
     DriveConstants.kBackRightDriveAbsoluteEncoderReversed,
     "Back Right #");
 
-  private AHRS gyro = new AHRS(SPI.Port.kMXP);
+  //private AHRS gyro = new AHRS(SPI.Port.kMXP); //TODO fix
 
   public SwerveModulePosition[] getModulePositions() {
     return (new SwerveModulePosition[] {

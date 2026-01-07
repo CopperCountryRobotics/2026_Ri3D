@@ -5,19 +5,25 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.IdleMode;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
+
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,14 +35,19 @@ public class SwerveModule extends SubsystemBase {
 
   private SparkMax driveMotor;
   private SparkMax turningMotor;
+  private SparkMaxConfig driveMotorConfig;
+  private SparkMaxConfig turningMotorConfig;
 
-  private RelativeEncoder driveEncoder;
-  private RelativeEncoder turningEncoder;
+  private AbsoluteEncoder driveEncoder; //TODO Update
+  private AbsoluteEncoder turningEncoder; //TODO Update
+
+  private AbsoluteEncoderConfig driveEncoderConfig; //TODO Update
+  private AbsoluteEncoderConfig turningEncoderConfig; //TODO Update
 
   private final PIDController turningPidController;
-  private PIDController builtinTurningPidController;
+  private SparkClosedLoopController builtinTurningPidController;
 
-  private final DutyCycleEncoder absoluteEncoder;
+  private final DutyCycleEncoder absoluteEncoder; //TODO Update
 
   private final double absoluteEncoderOffsetRad;
 
@@ -56,35 +67,42 @@ public class SwerveModule extends SubsystemBase {
         driveMotor = new SparkMax(driveMotorId, MotorType.kBrushless);
         turningMotor = new SparkMax(turningMotorId, MotorType.kBrushless);
         // Set reverse state of drive and turning motor
-        driveMotor.setInverted(driveMotorReversed);
-        turningMotor.setInverted(turningMotorReversed);
+        driveMotorConfig.inverted(driveMotorReversed);
+        turningMotorConfig.inverted(turningMotorReversed);
         // Set drive and turning motor encoder values
-        driveEncoder = driveMotor.getEncoder();
-        turningEncoder = turningMotor.getEncoder();
+        driveEncoder = driveMotor.getAbsoluteEncoder();
+        turningEncoder = turningMotor.getAbsoluteEncoder();
         // Change drive motor conversion factors
-        driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRot2Meter);
-        driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
+        driveEncoderConfig.positionConversionFactor(ModuleConstants.kDriveEncoderRot2Meter); //find this i guess
+        driveEncoderConfig.velocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
         // Change conversion factors for neo turning encoder - should be in radians
-        turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderRot2Rad);
-        turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderRPM2RadPerSec);
+        turningEncoderConfig.positionConversionFactor(ModuleConstants.kTurningEncoderRot2Rad);
+        turningEncoderConfig.velocityConversionFactor(ModuleConstants.kTurningEncoderRPM2RadPerSec);
         // Create PID controller on ROBO RIO
         turningPidController = new PIDController(ModuleConstants.kPTurning, 0, 0);
         // Tell PID controller that it is a *wheel*
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
         // -----SPARK-MAX-PID-----//
-        builtinTurningPidController = turningMotor.getPIDController();
+        builtinTurningPidController = turningMotor.getClosedLoopController();
         // Set PID values for the simulated Spark max PID
-        builtinTurningPidController.setP(ModuleConstants.kPTurning);
-        builtinTurningPidController.setI(ModuleConstants.kITurning);
-        builtinTurningPidController.setD(ModuleConstants.kDTurning);
-        builtinTurningPidController.setIZone(0.0);
-        builtinTurningPidController.setFF(0.0);
-        builtinTurningPidController.setOutputRange(-1, 1);
-        turningMotor.burnFlash();
-        driveMotor.setIdleMode(IdleMode.kBrake);
-        turningMotor.setIdleMode(IdleMode.kBrake);
-        driveMotor.setSmartCurrentLimit(40);
-        turningMotor.setSmartCurrentLimit(20);
+        turningMotorConfig.closedLoop.p(ModuleConstants.kPTurning);
+        turningMotorConfig.closedLoop.i(ModuleConstants.kITurning);
+        turningMotorConfig.closedLoop.d(ModuleConstants.kDTurning);
+        turningMotorConfig.closedLoop.iZone(0.0);
+        turningMotorConfig.closedLoop.velocityFF(0.0);
+        turningMotorConfig.closedLoop.outputRange(-1, 1);
+        //turningMotorConfig.burnFlash();
+
+        driveMotorConfig.idleMode(IdleMode.kBrake);
+        turningMotorConfig.idleMode(IdleMode.kBrake);
+        driveMotorConfig.smartCurrentLimit(40);
+        turningMotorConfig.smartCurrentLimit(20);
+
+        driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turningMotor.configure(turningMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //turningEncoder.configure(turningMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         // Call resetEncoders
         resetEncoders();
         // Create the mechanism 2d canvas and get the root
@@ -124,7 +142,7 @@ public class SwerveModule extends SubsystemBase {
     double angle;
 
     // Get encoder absolute position goes from 1 to 0
-    angle = (1 - absoluteEncoder.getAbsolutePosition()) * 2.0 * Math.PI;
+    angle = (1 - absoluteEncoder.get()) * 2.0 * Math.PI;
 
     angle -= absoluteEncoderOffsetRad;
 
@@ -133,11 +151,11 @@ public class SwerveModule extends SubsystemBase {
 
   // Set turning encoder to match absolute encoder value with gear offsets applied
   public void resetEncoders() {
-    driveEncoder.setPosition(0);
-    REVLibError error = turningEncoder.setPosition(getAbsoluteEncoderRad());
-    if (error.value != REVLibError.kOk.value) {
-    System.out.println("ENCODER ERROR ON " + error.value + " " + moduleName);
-    }
+    //driveEncoder.setPosition(0); //TODO fix
+    //REVLibError error = turningEncoder.setPosition(getAbsoluteEncoderRad()); //TODO Fix
+    // if (error.value != REVLibError.kOk.value) {
+    // System.out.println("ENCODER ERROR ON " + error.value + " " + moduleName);
+    //}
   }
 
   // Get swerve module current state, aka velocity and wheel rotation
@@ -145,30 +163,30 @@ public class SwerveModule extends SubsystemBase {
     return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
   }
   
-    public void setDesiredState(SwerveModuleState state) {
+  //   public void setDesiredState(SwerveModuleState state) {
 
-    // Check if new command has high driving power
-    if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-      stop();
-      return;
-    }
+  //   // Check if new command has high driving power
+  //   if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+  //     stop();
+  //     return;
+  //   }
 
-    state = SwerveModuleState.optimize(state, getState().angle);
+  //   state = SwerveModuleState.optimize(state, getState().angle);
 
-    driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+  //   driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
-    turningMotor
-        .set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
+  //   turningMotor
+  //       .set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
 
-    // simTurn.setAngle(state.angle);
-    // simDirection.setAngle(state.speedMetersPerSecond > 0 ? 0 : 180);
+  //   // simTurn.setAngle(state.angle);
+  //   // simDirection.setAngle(state.speedMetersPerSecond > 0 ? 0 : 180);
 
-    // simTurn2.setAngle(absoluteEncoder.getAbsolutePosition());
-    // simDirection2.setAngle(state.speedMetersPerSecond /
-    // DriveConstants.kPhysicalMaxSpeedMetersPerSecond > 0 ? 0 : 180);
-    SmartDashboard.putString(moduleName + " state", state.toString());
+  //   // simTurn2.setAngle(absoluteEncoder.getAbsolutePosition());
+  //   // simDirection2.setAngle(state.speedMetersPerSecond /
+  //   // DriveConstants.kPhysicalMaxSpeedMetersPerSecond > 0 ? 0 : 180);
+  //   SmartDashboard.putString(moduleName + " state", state.toString());
 
-  }
+  // }
 
   public void setDesiredState(SwerveModuleState state) {
     // Check if new command has high driving power
@@ -202,12 +220,14 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void setSmartCurrentLimiter(int driveLimit, int turningLimit) {
-    driveMotor.setSmartCurrentLimit(driveLimit);
-    turningMotor.setSmartCurrentLimit(driveLimit);
+    driveMotorConfig.smartCurrentLimit(driveLimit);
+    turningMotorConfig.smartCurrentLimit(driveLimit);
+    driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turningMotor.configure(turningMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
   
   /** Creates a new SwerveModule. */
-  public SwerveModule() {}
+  //public SwerveModule() {}
 
   @Override
   public void periodic() {
