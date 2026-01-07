@@ -20,6 +20,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   // private final SwerveHeadingController headingController;
 
+  // Create 4 swerve modules with attributes from constants
   public final SwerveModule frontLeft = new SwerveModule(
     DriveConstants.kFrontLeftDriveMotorPort,
     DriveConstants.kFrontLeftTurningMotorPort,
