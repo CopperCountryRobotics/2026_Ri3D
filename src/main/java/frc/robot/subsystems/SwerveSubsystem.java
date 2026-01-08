@@ -1,88 +1,158 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
+import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
-//import com.kauailabs.navx.frc.AHRS; //TODO fix
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.SwerveConstants;
+import frc.robot.lib.subsystems.SubsystemBase;
 
 public class SwerveSubsystem extends SubsystemBase {
+    private final SwerveModule frontLeft = new SwerveModule(
+        8, 7, 3,
+        false, true,
+        "FrontLeft");
+    private final SwerveModule frontRight = new SwerveModule(
+        2, 1, 1,
+        true, true,
+        "FrontRight");
+    private final SwerveModule backLeft = new SwerveModule(
+        6, 5, 0,
+        false, true,
+        "BackLeft");
+    private final SwerveModule backRight = new SwerveModule(
+        4, 3, 2,
+        true, true,
+        "BackRight");
+    private final Canandgyro gyro = new Canandgyro(9);
 
-  // private final SwerveHeadingController headingController;
+    private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
+        .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
 
-  // Create 4 swerve modules with attributes from constants
-  public final SwerveModule frontLeft = new SwerveModule(
-    DriveConstants.kFrontLeftDriveMotorPort,
-    DriveConstants.kFrontLeftTurningMotorPort,
-    DriveConstants.kFrontLeftDriveEncoderReversed,
-    DriveConstants.kFrontLeftTurningEncoderReversed,
-    DriveConstants.kFrontLeftDriveAbsoluteEncoderPort,
-    DriveConstants.kFrontLeftDriveAbsoluteEncoderOffsetRad,
-    DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed,
-    "Front Left #");
+    Vector<N3> stateStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);
+    Vector<N3> visionStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+        SwerveConstants.KINEMATICS,
+        this.getRotation2d(),
+        this.getSwervePosition(),
+        new Pose2d(),
+        stateStdDevs,
+        visionStdDevs);
 
-  private final SwerveModule frontRight = new SwerveModule(
-    DriveConstants.kFrontRightDriveMotorPort,
-    DriveConstants.kFrontRightTurningMotorPort,
-    DriveConstants.kFrontRightDriveEncoderReversed,
-    DriveConstants.kFrontRightTurningEncoderReversed,
-    DriveConstants.kFrontRightDriveAbsoluteEncoderPort,
-    DriveConstants.kFrontRightDriveAbsoluteEncoderOffsetRad,
-    DriveConstants.kFrontRightDriveAbsoluteEncoderReversed,
-    "Front Right #");
+    public SwerveSubsystem() {
+        super("Swerve", false);
+    }
 
-  private final SwerveModule backLeft = new SwerveModule(
-    DriveConstants.kBackLeftDriveMotorPort,
-    DriveConstants.kBackLeftTurningMotorPort,
-    DriveConstants.kBackLeftDriveEncoderReversed,
-    DriveConstants.kBackLeftTurningEncoderReversed,
-    DriveConstants.kBackLeftDriveAbsoluteEncoderPort,
-    DriveConstants.kBackLeftDriveAbsoluteEncoderOffsetRad,
-    DriveConstants.kBackLeftDriveAbsoluteEncoderReversed,
-    "Back Left #");
+    public void drive(double xSpeed, double ySpeed, double rSpeed, boolean fieldOriented) {
+        SwerveModuleState[] states = SwerveConstants.KINEMATICS.toSwerveModuleStates(
+            fieldOriented ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, this.getRotation2d()) :
+            new ChassisSpeeds(xSpeed, ySpeed, rSpeed));
+        this.setDesiredStates(states);
+    }
 
-  private final SwerveModule backRight = new SwerveModule(
-    DriveConstants.kBackRightDriveMotorPort,
-    DriveConstants.kBackRightTurningMotorPort,
-    DriveConstants.kBackRightDriveEncoderReversed,
-    DriveConstants.kBackRightTurningEncoderReversed,
-    DriveConstants.kBackRightDriveAbsoluteEncoderPort,
-    DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad,
-    DriveConstants.kBackRightDriveAbsoluteEncoderReversed,
-    "Back Right #");
+    public void drive(ChassisSpeeds speeds) {
+        SwerveModuleState[] states = SwerveConstants.KINEMATICS.toSwerveModuleStates(speeds);
+        this.setDesiredStates(states);
+    }
 
-  //private AHRS gyro = new AHRS(SPI.Port.kMXP); //TODO fix
+    @Override
+    public void periodic() {
+        this.poseEstimator.update(
+            this.getRotation2d(), this.getSwervePosition());
+        this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
+    }
 
-  public SwerveModulePosition[] getModulePositions() {
-    return (new SwerveModulePosition[] {
-        frontLeft.getPosition(),
-        frontRight.getPosition(),
-        backLeft.getPosition(),
-        backRight.getPosition() });
-  }
+    public double getHeading() {
+        return this.gyro.getRotation2d().getDegrees();
+    }
 
-  private SwerveDriveOdometry odometer;
+    public Rotation2d getRotation2d() {
+        return new Rotation2d(Units.degreesToRadians(this.getHeading()));
+    }
 
-  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
+    public ChassisSpeeds getSpeeds() {
+        return SwerveConstants.KINEMATICS.toChassisSpeeds(this.getSwerveState());
+    }
 
-  private boolean fieldOrientedFunction;
+    public Pose2d getPose() {
+        return this.poseEstimator.getEstimatedPosition();
+    }
 
-  /** Creates a new SwerveSubsystem. */
-  public SwerveSubsystem() {}
+    public void resetPose(Pose2d pose) {
+        this.poseEstimator.resetPose(pose);
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    public void resetSwerveEncoders() {
+        this.frontLeft.resetEncoder();
+        this.frontRight.resetEncoder();
+        this.backLeft.resetEncoder();
+        this.backRight.resetEncoder();
+    }
+
+    public void resetGyro() {
+        //this.gyro.reset();
+    }
+
+    public SwerveModuleState[] getSwerveState() {
+        return new SwerveModuleState[] {
+            this.frontLeft.getState(),
+            this.frontRight.getState(),
+            this.backLeft.getState(),
+            this.backRight.getState()
+        };
+    }
+
+    public SwerveModulePosition[] getSwervePosition() {
+        return new SwerveModulePosition[] {
+            this.frontLeft.getPosition(),
+            this.frontRight.getPosition(),
+            this.backLeft.getPosition(),
+            this.backRight.getPosition()
+        };
+    }
+
+    public void setDesiredStates(SwerveModuleState[] states) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.MAX_SPEED);
+        this.frontLeft.setDesiredState(states[0]);
+        this.frontRight.setDesiredState(states[1]);
+        this.backLeft.setDesiredState(states[2]);
+        this.backRight.setDesiredState(states[3]);
+    }
+
+    public void stopModules() {
+        this.frontLeft.stop();
+        this.frontRight.stop();
+        this.backLeft.stop();
+        this.backRight.stop();
+    }
+
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+        System.out.println("A");
+        this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+    }
+
+    public void addVisionMeasurement(
+            Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+        this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
+    }
+
+    @Override
+    public void putDashboard() {
+        SmartDashboard.putNumber("GyroAngle", this.getHeading());
+        SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
+    }
 }
