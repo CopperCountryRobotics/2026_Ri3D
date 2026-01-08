@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
-import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+//import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+import com.ctre.phoenix6.*;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -38,7 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
         4, 3, 2,
         true, true,
         "BackRight");
-    private final Canandgyro gyro = new Canandgyro(9);
+    private final Pigeon2 gyro = new Pigeon2(9);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
         .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
