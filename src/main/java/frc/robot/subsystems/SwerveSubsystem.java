@@ -40,7 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
         4, 3, 2,
         true, true,
         "BackRight");
-    private final Pigeon2 gyro = new Pigeon2(9);
+    //private final Pigeon2 gyro = new Pigeon2(9);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
         .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -79,7 +79,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return this.gyro.getRotation2d().getDegrees();
+        return 0;//this.gyro.getRotation2d().getDegrees();
     }
 
     public Rotation2d getRotation2d() {
