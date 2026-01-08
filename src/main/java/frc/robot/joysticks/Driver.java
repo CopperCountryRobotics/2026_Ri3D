@@ -16,18 +16,18 @@ public class Driver extends XboxController {
     }
 
     public double getXDesiredSpeed() {
-        double speed = -MathUtil.applyDeadband(this.getLeftY(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED * this.getBrake();
-        return this.xLimiter.calculate(speed);
+        double speed = -MathUtil.applyDeadband(this.getLeftY(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED * 2.5 * this.getBrake();
+        return this.xLimiter.calculate(speed) * 2;
     }
 
     public double getYDesiredSpeed() {
-        double speed = -MathUtil.applyDeadband(this.getLeftX(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED * this.getBrake();
-        return this.yLimiter.calculate(speed);
+        double speed = -MathUtil.applyDeadband(this.getLeftX(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED * 2.5 * this.getBrake();
+        return this.yLimiter.calculate(speed) * 2;
     }
 
     public double getRDesiredSpeed() {
-        double speed = -MathUtil.applyDeadband(this.getRightX(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED * this.getBrake();
-        return this.rLimiter.calculate(speed);
+        double speed = -MathUtil.applyDeadband(this.getRightX(), SwerveConstants.DEAD_BAND) * SwerveConstants.MAX_SPEED *3 * this.getBrake();
+        return this.rLimiter.calculate(speed) * 3;
     }
 
     public double getBrake() {

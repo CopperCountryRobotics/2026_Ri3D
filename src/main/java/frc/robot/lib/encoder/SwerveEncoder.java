@@ -2,6 +2,7 @@ package frc.robot.lib.encoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveEncoder{
     AnalogEncoder coder;
@@ -15,7 +16,7 @@ public class SwerveEncoder{
     }
 
     public Rotation2d getRotation() {
-        double value = coder.get() + offset;
+        double value = (coder.get() * 360) - offset;
         return Rotation2d.fromDegrees(value > 180 ? value - 360 : value);
     }
 }

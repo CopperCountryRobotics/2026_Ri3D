@@ -14,9 +14,9 @@ public class SwerveCmd extends Command {
 		SwerveSubsystem swerveSubsystem,
 		Supplier<Double> xSpeed, Supplier<Double> ySpeed, Supplier<Double> rSpeed) {
 		this.swerveSubsystem = swerveSubsystem;
-		this.xSpeed = xSpeed;
-		this.ySpeed = ySpeed;
-		this.rSpeed = rSpeed;
+		this.xSpeed = ()-> xSpeed.get() * 2;
+		this.ySpeed = ()->ySpeed.get()*2;
+		this.rSpeed = ()->rSpeed.get()*2;
 		this.addRequirements(this.swerveSubsystem);
 	}
 
