@@ -9,11 +9,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -24,7 +28,8 @@ public final class Constants {
     public static final double kDriveMotorGearRatio = 6.75 / 1.0;
     public static final double kTurningMotorGearRatio = 150.0 / 7.0;
 
-    public static final double kDriveEncoderRot2Meters = (2.0 * Math.PI) * (kWheelDiameterMeters / 2.0) / kDriveMotorGearRatio;
+    public static final double kDriveEncoderRot2Meters = (2.0 * Math.PI) * (kWheelDiameterMeters / 2.0)
+        / kDriveMotorGearRatio;
     public static final double kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2.0 * Math.PI;
 
     public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meters / 60.0;
@@ -34,80 +39,98 @@ public final class Constants {
     public static final double kITurning = 0.0;
     public static final double kDTurning = 0.0;
 
-    public static final double kDriveEncoderRot2Meter = 1 / (Units.inchesToMeters(4) * Math.PI); //3.132965055;
+    public static final double kDriveEncoderRot2Meter = 1 / (Units.inchesToMeters(4) * Math.PI); // 3.132965055;
   }
 
   public static final class DriveConstants {
     public static final double kTrackWidth = Units.inchesToMeters(0.0);
     public static final double kWheelBase = Units.inchesToMeters(0.0);
-    
+
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-      new Translation2d(kWheelBase / 2, kTrackWidth / 2), // Front Left
-      new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // Front Right
-      new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // Back Left
-      new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // Back Right
-      
-      // Driving Motor Ports
-      public static final int kFrontLeftDriveMotorPort = 0;
-      public static final int kFrontRightDriveMotorPort = 0;
-      public static final int kBackRightDriveMotorPort = 0;
-      public static final int kBackLeftDriveMotorPort = 0;
-        
-      // Turning Motor Ports
-      public static final int kFrontLeftTurningMotorPort = 0;
-      public static final int kFrontRightTurningMotorPort = 0;
-      public static final int kBackRightTurningMotorPort = 0;
-      public static final int kBackLeftTurningMotorPort = 0;
+        new Translation2d(kWheelBase / 2, kTrackWidth / 2), // Front Left
+        new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // Front Right
+        new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // Back Left
+        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // Back Right
 
-      // Encoder for NEO drive
-      public static final boolean kFrontLeftDriveEncoderReversed = true;
-      public static final boolean kBackLeftDriveEncoderReversed = true;
-      public static final boolean kFrontRightDriveEncoderReversed = true;
-      public static final boolean kBackRightDriveEncoderReversed = true;
+    // Driving Motor Ports
+    public static final int kFrontLeftDriveMotorPort = 0;
+    public static final int kFrontRightDriveMotorPort = 0;
+    public static final int kBackRightDriveMotorPort = 0;
+    public static final int kBackLeftDriveMotorPort = 0;
 
-      // Encoder on NEO turning
-      public static final boolean kFrontLeftTurningEncoderReversed = true;
-      public static final boolean kBackLeftTurningEncoderReversed = true;
-      public static final boolean kFrontRightTurningEncoderReversed = true;
-      public static final boolean kBackRightTurningEncoderReversed = true;
+    // Turning Motor Ports
+    public static final int kFrontLeftTurningMotorPort = 0;
+    public static final int kFrontRightTurningMotorPort = 0;
+    public static final int kBackRightTurningMotorPort = 0;
+    public static final int kBackLeftTurningMotorPort = 0;
 
-      // DIO ports on the roboRIO - MagEncoders from swerve module.
-      public static final int kFrontLeftDriveAbsoluteEncoderPort = 0;
-      public static final int kBackLeftDriveAbsoluteEncoderPort = 0;
-      public static final int kFrontRightDriveAbsoluteEncoderPort = 0;
-      public static final int kBackRightDriveAbsoluteEncoderPort = 0;
+    // Encoder for NEO drive
+    public static final boolean kFrontLeftDriveEncoderReversed = true;
+    public static final boolean kBackLeftDriveEncoderReversed = true;
+    public static final boolean kFrontRightDriveEncoderReversed = true;
+    public static final boolean kBackRightDriveEncoderReversed = true;
 
-      // Absolute encoders reversed
-      public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = false;
-      public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;
-      public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
-      public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
+    // Encoder on NEO turning
+    public static final boolean kFrontLeftTurningEncoderReversed = true;
+    public static final boolean kBackLeftTurningEncoderReversed = true;
+    public static final boolean kFrontRightTurningEncoderReversed = true;
+    public static final boolean kBackRightTurningEncoderReversed = true;
 
-      // Ri3D Competition Robot
-      public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(0.0);
-      public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math
-              .toRadians(0.0);
-      public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math
-              .toRadians(0.0);
-      public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math
-              .toRadians(0.0);
+    // DIO ports on the roboRIO - MagEncoders from swerve module.
+    public static final int kFrontLeftDriveAbsoluteEncoderPort = 0;
+    public static final int kBackLeftDriveAbsoluteEncoderPort = 0;
+    public static final int kFrontRightDriveAbsoluteEncoderPort = 0;
+    public static final int kBackRightDriveAbsoluteEncoderPort = 0;
 
-      public static final double kPhysicalMaxSpeedMetersPerSecond = 0.0;
-      public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = Math.toRadians(0.0);
+    // Absolute encoders reversed
+    public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = false;
+    public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;
+    public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
+    public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
 
-      public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond;
-      public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond;
-      public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 0.0;
-      public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 0.0;
+    // Ri3D Competition Robot
+    public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(0.0);
+    public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math
+        .toRadians(0.0);
+    public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math
+        .toRadians(0.0);
+    public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math
+        .toRadians(0.0);
 
-      public static final double kPThetaController = 0.0;
-      public static final double kIThetaController = 0.0;
-      public static final double kDThetaController = 0.0;
+    public static final double kPhysicalMaxSpeedMetersPerSecond = 0.0;
+    public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = Math.toRadians(0.0);
 
-      public static final double kMaxDriveMotorTemp = 0.0;      
+    public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond;
+    public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond;
+    public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 0.0;
+    public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 0.0;
+
+    public static final double kPThetaController = 0.0;
+    public static final double kIThetaController = 0.0;
+    public static final double kDThetaController = 0.0;
+
+    public static final double kMaxDriveMotorTemp = 0.0;
   }
 
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+  public static final class SwerveConstants {
+    public static final double TRACK_WIDTH = Units.inchesToMeters(23.75);
+    public static final double TRACK_LENGTH = Units.inchesToMeters(23.75);
+    public static final double WHEEL_RADIUS = Units.inchesToMeters(4 / 2.0);
+    public static final double DRIVE_GEAR_RATIO = 300.0 / 79.0;
+    public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
+    public static final int MAX_DRIVE_VOLTAGE = 12;
+    public static final int MAX_TURN_VOLTAGE = 8;
+
+    public static final double MAX_SPEED = 2.0;
+    public static final double MAX_ACCELERATION = 10.0;
+    public static final double MAX_ANGULAR_ACCELERATION = 10.0;
+
+    public static final double DEAD_BAND = 0.05;
+
+    public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+        new Translation2d(TRACK_LENGTH / 2.0, TRACK_WIDTH / 2.0),
+        new Translation2d(TRACK_LENGTH / 2.0, -TRACK_WIDTH / 2.0),
+        new Translation2d(-TRACK_LENGTH / 2.0, TRACK_WIDTH / 2.0),
+        new Translation2d(-TRACK_LENGTH / 2.0, -TRACK_LENGTH / 2.0));
   }
 }

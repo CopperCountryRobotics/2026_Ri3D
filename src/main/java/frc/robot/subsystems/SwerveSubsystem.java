@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-//import com.reduxrobotics.sensors.canandgyro.Canandgyro;
-import com.ctre.phoenix6.*;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -25,63 +23,88 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.SwerveConstants;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lib.subsystems.SubsystemBase;
+import static frc.robot.Constants.SwerveConstants.KINEMATICS;
+import static frc.robot.Constants.SwerveConstants.MAX_SPEED;;
 
+
+/**
+ * Swerve Subsystem class that creates a swerve drivetrain using Swerve
+ * Modules(NEO motors) and a ctre pigeon2
+ */
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
-        8, 7, 3,
-        false, true,
-        "FrontLeft");
+            8, 7, 3,
+            false, true,
+            "FrontLeft");
     private final SwerveModule frontRight = new SwerveModule(
-        2, 1, 1,
-        true, true,
-        "FrontRight");
+            2, 1, 1,
+            true, true,
+            "FrontRight");
     private final SwerveModule backLeft = new SwerveModule(
-        6, 5, 0,
-        false, true,
-        "BackLeft");
+            6, 5, 0,
+            false, true,
+            "BackLeft");
     private final SwerveModule backRight = new SwerveModule(
-        4, 3, 2,
-        true, true,
-        "BackRight");
+            4, 3, 2,
+            true, true,
+            "BackRight");
     private final Pigeon2 gyro = new Pigeon2(9);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
-        .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
+            .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
 
     Vector<N3> stateStdDevs = VecBuilder.fill(0.5, 0.5, 0.5);
     Vector<N3> visionStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
-        SwerveConstants.KINEMATICS,
-        this.getRotation2d(),
-        this.getSwervePosition(),
-        new Pose2d(),
-        stateStdDevs,
-        visionStdDevs);
+            KINEMATICS,
+            this.getRotation2d(),
+            this.getSwervePosition(),
+            new Pose2d(),
+            stateStdDevs,
+            visionStdDevs);
 
-    public SwerveSubsystem() {
+    // private final Supplier<Double> xSpeed, ySpeed, rSpeed;
+
+    private final SendableChooser<Double> polarityChooserX = new SendableChooser<>();
+    private final SendableChooser<Double> polarityChooserY = new SendableChooser<>();
+
+    /** Standard constructor */
+    public SwerveSubsystem(// Supplier<Double> xSpeed, Supplier<Double> ySpeed, Supplier<Double> rSpeed
+    ) {
         super("Swerve", false);
+
+        // this.xSpeed = ()-> xSpeed.get() * 2;
+        // this.ySpeed = ()->ySpeed.get()*2;
+        // this.rSpeed = ()->rSpeed.get()*2;
+
+        polarityChooserX.setDefaultOption("Positive", 1.0);
+        polarityChooserX.addOption("Negative", -1.0);
+        SmartDashboard.putData("Polarity Chooser X", polarityChooserX);
+
+        polarityChooserY.setDefaultOption("Positive", 1.0);
+        polarityChooserY.addOption("Negative", -1.0);
+        SmartDashboard.putData("Polarity Chooser Y", polarityChooserY);
     }
 
+    /** drive method, built for use with a controller */
     public void drive(double xSpeed, double ySpeed, double rSpeed, boolean fieldOriented) {
-        SwerveModuleState[] states = SwerveConstants.KINEMATICS.toSwerveModuleStates(
-            fieldOriented ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rSpeed, this.getRotation2d()) :
-            new ChassisSpeeds(xSpeed, ySpeed, rSpeed));
+        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                fieldOriented
+                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed * polarityChooserX.getSelected(),
+                                ySpeed * polarityChooserY.getSelected(), rSpeed, this.getRotation2d())
+                        : new ChassisSpeeds(xSpeed, ySpeed, rSpeed));
         this.setDesiredStates(states);
     }
 
+    /** drive method, built for auto use */
     public void drive(ChassisSpeeds speeds) {
-        SwerveModuleState[] states = SwerveConstants.KINEMATICS.toSwerveModuleStates(speeds);
+        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(speeds);
         this.setDesiredStates(states);
-    }
-
-    @Override
-    public void periodic() {
-        this.poseEstimator.update(
-            this.getRotation2d(), this.getSwervePosition());
-        this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
     }
 
     public double getHeading() {
@@ -93,15 +116,23 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public ChassisSpeeds getSpeeds() {
-        return SwerveConstants.KINEMATICS.toChassisSpeeds(this.getSwerveState());
+        return KINEMATICS.toChassisSpeeds(this.getSwerveState());
     }
 
     public Pose2d getPose() {
         return this.poseEstimator.getEstimatedPosition();
     }
 
-    public void resetPose(Pose2d pose) {
-        this.poseEstimator.resetPose(pose);
+    public Command resetPose(Pose2d pose) {
+        return runOnce(() -> {
+            this.poseEstimator.resetPose(pose);
+        });
+    }
+
+    public Command resetGyro() {
+        return runOnce(() -> {
+            gyro.reset();
+        });
     }
 
     public void resetSwerveEncoders() {
@@ -111,30 +142,26 @@ public class SwerveSubsystem extends SubsystemBase {
         this.backRight.resetEncoder();
     }
 
-    public void resetGyro() {
-        //this.gyro.reset();
-    }
-
     public SwerveModuleState[] getSwerveState() {
         return new SwerveModuleState[] {
-            this.frontLeft.getState(),
-            this.frontRight.getState(),
-            this.backLeft.getState(),
-            this.backRight.getState()
+                this.frontLeft.getState(),
+                this.frontRight.getState(),
+                this.backLeft.getState(),
+                this.backRight.getState()
         };
     }
 
     public SwerveModulePosition[] getSwervePosition() {
         return new SwerveModulePosition[] {
-            this.frontLeft.getPosition(),
-            this.frontRight.getPosition(),
-            this.backLeft.getPosition(),
-            this.backRight.getPosition()
+                this.frontLeft.getPosition(),
+                this.frontRight.getPosition(),
+                this.backLeft.getPosition(),
+                this.backRight.getPosition()
         };
     }
 
     public void setDesiredStates(SwerveModuleState[] states) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.MAX_SPEED);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_SPEED);
         this.frontLeft.setDesiredState(states[0]);
         this.frontRight.setDesiredState(states[1]);
         this.backLeft.setDesiredState(states[2]);
@@ -158,33 +185,39 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
+    /** Pathplanner configuration - must be called once in Robot Container */
+    public void configPathPlanner() {
+        try {
+            var config = RobotConfig.fromGUISettings();
+
+            AutoBuilder.configure(
+                    () -> getPose(),
+                    this::resetPose,
+                    () -> getSpeeds(),
+                    (speeds, feedforwards) -> drive(speeds),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(10, 0, 0), // drive
+                            new PIDConstants(7, 0, 0)), // Rotation
+                    config,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
+        } catch (Exception ex) {
+            DriverStation.reportError("Pathplanner failed to configure", ex.getStackTrace());
+        }
+    }
+
+    // updates dashboard
     @Override
     public void putDashboard() {
         SmartDashboard.putNumber("GyroAngle", this.getHeading());
         SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
     }
 
-    public void configPathPlanner(){
-                    try {
-                var config = RobotConfig.fromGUISettings();
-
-                AutoBuilder.configure
-                (
-                        () -> getPose(),
-                        this::resetPose,
-                        () -> getSpeeds(),
-                        (speeds, feedforwards) -> 
-                                drive(speeds),
-                                        // .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                                        // .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-                        new PPHolonomicDriveController(
-                                new PIDConstants(10, 0, 0), // drive
-                                new PIDConstants(7, 0, 0)), // Rotation
-                        config,
-                        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                        this);
-            } catch (Exception ex) {
-                DriverStation.reportError("something may or may not be broken, idk", ex.getStackTrace());
-            }
+    // updates pose
+    @Override
+    public void periodic() {
+        this.poseEstimator.update(
+                this.getRotation2d(), this.getSwervePosition());
+        this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
     }
 }
