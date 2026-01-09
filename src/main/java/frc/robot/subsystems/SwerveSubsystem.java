@@ -3,6 +3,10 @@ package frc.robot.subsystems;
 //import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.ctre.phoenix6.*;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -19,6 +23,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.SwerveConstants;
 import frc.robot.lib.subsystems.SubsystemBase;
@@ -156,5 +162,29 @@ public class SwerveSubsystem extends SubsystemBase {
     public void putDashboard() {
         SmartDashboard.putNumber("GyroAngle", this.getHeading());
         SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
+    }
+
+    public void configPathPlanner(){
+                    try {
+                var config = RobotConfig.fromGUISettings();
+
+                AutoBuilder.configure
+                (
+                        () -> getPose(),
+                        this::resetPose,
+                        () -> getSpeeds(),
+                        (speeds, feedforwards) -> 
+                                drive(speeds),
+                                        // .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                        // .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                        new PPHolonomicDriveController(
+                                new PIDConstants(10, 0, 0), // drive
+                                new PIDConstants(7, 0, 0)), // Rotation
+                        config,
+                        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                        this);
+            } catch (Exception ex) {
+                DriverStation.reportError("something may or may not be broken, idk", ex.getStackTrace());
+            }
     }
 }
