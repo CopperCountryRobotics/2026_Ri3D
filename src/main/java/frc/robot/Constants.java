@@ -175,7 +175,6 @@ public final class Constants {
     public static final int RIGHT_JOYSTICK_CLICK = 11;
   }
   public static final class ShooterConstants{
-    public static final boolean bothSided = true;
     public static final boolean MotorReversed = false;
     public static final boolean reverseMotorReversed = false;
   }
