@@ -43,6 +43,9 @@ public final class Constants {
      public static final int SHOOTER_ID = 10;//not set to irl motors
      public static final int SHOOTER_FOLLOWER_ID = 11;//not set to irl motors
 
+     //intake CAN ids
+    public static final int INTAKE_ID = 12;//not set to irl motors
+    public static final int INTAKE_FOLLOWER_ID = 13;//not set to irl motos
   }
 
   public static final class ModuleConstants {
@@ -170,10 +173,5 @@ public final class Constants {
     public static final int START = 9;
     public static final int LEFT_JOYSTICK_CLICK = 10;
     public static final int RIGHT_JOYSTICK_CLICK = 11;
-  }
-  public static final class ShooterConstants{
-    public static final boolean bothSided = true;
-    public static final boolean MotorReversed = false;
-    public static final boolean reverseMotorReversed = false;
   }
 }
