@@ -24,7 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (followerEnabled) {
             followerMotor = new SparkMax(SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
             SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
-            followerMotorConfig.follow(SHOOTER_ID);
+            followerMotorConfig.follow(SHOOTER_ID,true);
         }
     }
 
