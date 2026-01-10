@@ -113,8 +113,8 @@ public final class Constants {
   }
 
   public static final class SwerveConstants {
-    public static final double TRACK_WIDTH = Units.inchesToMeters(23.75);
-    public static final double TRACK_LENGTH = Units.inchesToMeters(23.75);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(21.75);//Was 23.75 before reducing drivetrain size
+    public static final double TRACK_LENGTH = Units.inchesToMeters(21.75);//Was 23.75 before reducing drivetrain size
     public static final double WHEEL_RADIUS = Units.inchesToMeters(4 / 2.0);
     public static final double DRIVE_GEAR_RATIO = 300.0 / 79.0;
     public static final double TURN_GEAR_RATIO = 150.0 / 7.0;

@@ -28,15 +28,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.lib.subsystems.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;;
+import java.util.function.Supplier;
 
 /**
  * Swerve Subsystem class that creates a swerve drivetrain using Swerve
