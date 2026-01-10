@@ -43,8 +43,9 @@ public final class Constants {
      public static final int SHOOTER_ID = 10;//not set to irl motors
      public static final int SHOOTER_FOLLOWER_ID = 11;//not set to irl motors
 
-     public static final int INTAKE_ID = 12;//not set to irl motors
-
+     //intake CAN ids
+    public static final int INTAKE_ID = 12;//not set to irl motors
+    public static final int INTAKE_FOLLOWER_ID = 13;//not set to irl motos
   }
 
   public static final class ModuleConstants {

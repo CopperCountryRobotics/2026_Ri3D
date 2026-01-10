@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.HarwareConstants.*;
@@ -11,6 +12,8 @@ import static frc.robot.Constants.HarwareConstants.*;
 public class ShooterSubsystem extends SubsystemBase {
     private final SparkMax motor;
     private SparkMax followerMotor;
+
+    private double setSpeed;
 
     private final boolean followerEnabled = false;
 
@@ -29,6 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command setSpeed(double speed) {
         return runOnce(() -> {
             motor.set(speed);
+            setSpeed = speed;
         });
     }
 
@@ -41,4 +45,9 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
+    @Override public void periodic(){
+        //update dashboard
+        SmartDashboard.putNumber("Motor speed", this.motor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Set speed", this.motor.getEncoder().getVelocity());
+    }
 }
