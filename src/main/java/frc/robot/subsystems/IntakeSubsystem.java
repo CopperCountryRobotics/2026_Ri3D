@@ -34,7 +34,10 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public Command toggle(){
-        return null;
-        //return new InstantCommand(()->((enabled)?disable():enable()), this);
+        if (enabled) {
+            return new InstantCommand(()->disable(), this);
+        }else{
+            return new InstantCommand(()->enable(), this);
+        }
     }
 }
