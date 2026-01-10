@@ -1,48 +1,42 @@
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.SwerveCmd;
-import frc.robot.joysticks.Driver;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.SwerveSubsystem;
-//import frc.robot.subsystems.VisionSubsystem;
+import static frc.robot.Constants.XboxButtonValues.*;
 
 public class RobotContainer {
+	// Joysticks
+	private final XboxController xbox = new XboxController(0);
 
-	//private final Pigeon2 gyro = new Pigeon2(9);
+	// Subsystems/custom class instiantiation
+	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true);
 
-	private final Driver driver = new Driver();
-	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-	//private final VisionSubsystem visionSubsystem = new VisionSubsystem(
-		//this.swerveSubsystem::addVisionMeasurement, this.swerveSubsystem::getPose);
-
-		private final SendableChooser<Command> autoChooser;
+	// Sendable chooser for auton (appears on Dashboards)
+	private final SendableChooser<Command> autoChooser;
 
 	public RobotContainer() {
-		this.swerveSubsystem.setDefaultCommand(
-			new SwerveCmd(
-				this.swerveSubsystem,
-				this.driver::getXDesiredSpeed, this.driver::getYDesiredSpeed, this.driver::getRDesiredSpeed));
+		configBindings();
 
-		//register named commands here
+		// register named commands here
 
-		//config pathplanner
+		// config pathplanner
 		swerveSubsystem.configPathPlanner();
-		//add auto chooser
+		// add auto chooser to dashboard
 		autoChooser = AutoBuilder.buildAutoChooser();
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public void configBindings() {
-		this.driver.resetGyro()
-			.onTrue(Commands.runOnce(this.swerveSubsystem::resetGyro, this.swerveSubsystem));
-		this.driver.resetPosition()
-			.onTrue(Commands.runOnce(this.swerveSubsystem::resetSwerveEncoders, this.swerveSubsystem));
+		new JoystickButton(xbox, A).onTrue(swerveSubsystem.resetGyro());
+		new JoystickButton(xbox, B).onTrue(swerveSubsystem.resetPose(new Pose2d(0, 0, new Rotation2d(0))));
 	}
 
 	public Command getAutonomousCommand() {

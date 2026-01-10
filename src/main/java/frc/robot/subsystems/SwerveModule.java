@@ -5,11 +5,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.SwerveConstants;
 import frc.robot.lib.encoder.SwerveEncoder;
 import frc.robot.lib.helpers.IDashboardProvider;
 import frc.robot.lib.motors.SwerveSpark;
+import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
+import static frc.robot.Constants.SwerveConstants.TURN_GEAR_RATIO;
+import static frc.robot.Constants.SwerveConstants.DRIVE_GEAR_RATIO;
 
+/** Utils class to create a swerve module object for Neo motors */
 public class SwerveModule implements IDashboardProvider {
     private final SwerveSpark drive;
     private final SwerveSpark turn;
@@ -18,13 +21,12 @@ public class SwerveModule implements IDashboardProvider {
     private final String moduleName;
 
     public SwerveModule(
-        int driveId, int turnId, int encoderId,
-        boolean driveReverse, boolean turnReverse,
-        String moduleName
-    ) {
+            int driveId, int turnId, int encoderId,
+            boolean driveReverse, boolean turnReverse,
+            String moduleName) {
         this.registerDashboard();
-        this.drive = new SwerveSpark(driveId, driveReverse, true, SwerveConstants.DRIVE_GEAR_RATIO);
-        this.turn = new SwerveSpark(turnId, turnReverse, false, SwerveConstants.TURN_GEAR_RATIO);
+        this.drive = new SwerveSpark(driveId, driveReverse, true, DRIVE_GEAR_RATIO);
+        this.turn = new SwerveSpark(turnId, turnReverse, false, TURN_GEAR_RATIO);
         this.encoder = new SwerveEncoder(encoderId);
         this.pid = new PIDController(40.0, 0.1, 0.1);
         this.moduleName = moduleName;
@@ -40,16 +42,14 @@ public class SwerveModule implements IDashboardProvider {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            this.drive.getVelocity(),
-            this.encoder.getRotation()
-        );
+                this.drive.getVelocity(),
+                this.encoder.getRotation());
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            this.drive.getPosition(),
-            this.encoder.getRotation()
-        );
+                this.drive.getPosition(),
+                this.encoder.getRotation());
     }
 
     public void setDesiredState(SwerveModuleState desiredState) {
@@ -59,14 +59,15 @@ public class SwerveModule implements IDashboardProvider {
         }
         desiredState.optimize(this.getState().angle);
 
-        double driveVoltage = desiredState.speedMetersPerSecond / SwerveConstants.MAX_SPEED;
-        double turnVoltage = this.pid.calculate(this.encoder.getRotation().getRotations(), desiredState.angle.getRotations());
+        double driveVoltage = desiredState.speedMetersPerSecond / MAX_SPEED;
+        double turnVoltage = this.pid.calculate(this.encoder.getRotation().getRotations(),
+                desiredState.angle.getRotations());
 
         SmartDashboard.putNumber(this.moduleName + "/desiredAngle", desiredState.angle.getRotations());
         SmartDashboard.putNumber(this.moduleName + "/turnVoltage", turnVoltage);
 
-        this.drive.setVoltage(MathUtil.applyDeadband(driveVoltage*2.5, 0.05));
-        this.turn.setVoltage(MathUtil.applyDeadband(turnVoltage*3, 0.05));
+        this.drive.setVoltage(MathUtil.applyDeadband(driveVoltage * 2.5, 0.05));
+        this.turn.setVoltage(MathUtil.applyDeadband(turnVoltage * 3, 0.05));
     }
 
     public void stop() {
