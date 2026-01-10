@@ -33,6 +33,8 @@ import frc.robot.lib.subsystems.SubsystemBase;
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
+import static frc.robot.Constants.HarwareConstants.*;
+
 
 import java.util.function.Supplier;
 
@@ -42,22 +44,22 @@ import java.util.function.Supplier;
  */
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
-            8, 7, 3,
+            FRONT_LEFT_DRIVE_ID, FRONT_LEFT_TURN_ID, FRONT_LEFT_ENCODER_PORT,
             false, true,
             "FrontLeft");
     private final SwerveModule frontRight = new SwerveModule(
-            2, 1, 1,
+            FRONT_RIGHT_DRIVE_ID, FRONT_RIGHT_TURN_ID, FRONT_RIGHT_ENCODER_PORT,
             true, true,
             "FrontRight");
     private final SwerveModule backLeft = new SwerveModule(
-            6, 5, 0,
+            BACK_LEFT_DRIVE_ID, BACK_LEFT_TURN_ID, BACK_LEFT_ENCODER_PORT,
             false, true,
             "BackLeft");
     private final SwerveModule backRight = new SwerveModule(
-            4, 3, 2,
+            BACK_RIGHT_DRIVE_ID, BACK_RIGHT_TURN_ID, BACK_RIGHT_ENCODER_PORT,
             true, true,
             "BackRight");
-    private final Pigeon2 gyro = new Pigeon2(9);
+    private final Pigeon2 gyro = new Pigeon2(GYRO_ID);
 
     private final XboxController xbox;
     private final boolean fieldOriented;

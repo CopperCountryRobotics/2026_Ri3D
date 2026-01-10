@@ -21,6 +21,29 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class HarwareConstants {
+    //Drive Encoder Ports
+    public static final int BACK_LEFT_ENCODER_PORT = 0;
+    public static final int FRONT_RIGHT_ENCODER_PORT = 1;
+    public static final int BACK_RIGHT_ENCODER_PORT = 2;
+    public static final int FRONT_LEFT_ENCODER_PORT = 3;
+
+    //Drive CAN ids
+    public static final int FRONT_RIGHT_TURN_ID = 1;
+    public static final int FRONT_RIGHT_DRIVE_ID = 2;
+    public static final int BACK_RIGHT_TURN_ID = 3;
+    public static final int BACK_RIGHT_DRIVE_ID = 4;
+    public static final int BACK_LEFT_TURN_ID = 5;
+    public static final int BACK_LEFT_DRIVE_ID = 6;
+    public static final int FRONT_LEFT_TURN_ID = 7;
+    public static final int FRONT_LEFT_DRIVE_ID = 8;
+    public static final int GYRO_ID = 9;
+
+     //shooter CAN ids
+     public static final int SHOOTER_ID = 10;//not set to irl motors
+     public static final int SHOOTER_FOLLOWER_ID = 11;//not set to irl motors
+
+  }
 
   public static final class ModuleConstants {
     public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
@@ -149,9 +172,7 @@ public final class Constants {
     public static final int RIGHT_JOYSTICK_CLICK = 11;
   }
   public static final class ShooterConstants{
-    public static final int ShooterID =10;
     public static final boolean bothSided = true;
-    public static final int ReverseMotorID = 0;
     public static final boolean MotorReversed = false;
     public static final boolean reverseMotorReversed = false;
   }
