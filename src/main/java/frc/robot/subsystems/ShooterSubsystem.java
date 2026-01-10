@@ -13,6 +13,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkMax motor;
     private SparkMax followerMotor;
 
+    private double setSpeed;
+
     private final boolean followerEnabled = false;
 
     /**Constructor */
@@ -30,6 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command setSpeed(double speed) {
         return runOnce(() -> {
             motor.set(speed);
+            setSpeed = speed;
         });
     }
 
@@ -42,12 +45,9 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    @Override
-    public void putDashboard(){
-        SmartDashboard.putNumber("Motor speed", this.motor.getEncoder().getVelocity());
-    }
-
     @Override public void periodic(){
-
+        //update dashboard
+        SmartDashboard.putNumber("Motor speed", this.motor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Set speed", this.motor.getEncoder().getVelocity());
     }
 }
