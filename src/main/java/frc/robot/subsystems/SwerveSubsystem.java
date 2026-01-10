@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -22,14 +23,20 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.lib.subsystems.SubsystemBase;
-import static frc.robot.Constants.SwerveConstants.KINEMATICS;
-import static frc.robot.Constants.SwerveConstants.MAX_SPEED;;
 
+import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
+import static frc.robot.Constants.SwerveConstants.KINEMATICS;
+import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;;
 
 /**
  * Swerve Subsystem class that creates a swerve drivetrain using Swerve
@@ -54,6 +61,9 @@ public class SwerveSubsystem extends SubsystemBase {
             "BackRight");
     private final Pigeon2 gyro = new Pigeon2(9);
 
+    private final XboxController xbox;
+    private final boolean fieldOriented;
+
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
 
@@ -74,8 +84,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SendableChooser<Double> polarityChooserY = new SendableChooser<>();
 
     /** Standard constructor */
-    public SwerveSubsystem(// Supplier<Double> xSpeed, Supplier<Double> ySpeed, Supplier<Double> rSpeed
-    ) {
+    public SwerveSubsystem(XboxController xbox, boolean fieldOriented) {
         super("Swerve", false);
 
         // this.xSpeed = ()-> xSpeed.get() * 2;
@@ -89,16 +98,25 @@ public class SwerveSubsystem extends SubsystemBase {
         polarityChooserY.setDefaultOption("Positive", 1.0);
         polarityChooserY.addOption("Negative", -1.0);
         SmartDashboard.putData("Polarity Chooser Y", polarityChooserY);
+
+        this.xbox = xbox;
+        this.fieldOriented = fieldOriented;
     }
 
     /** drive method, built for use with a controller */
-    public void drive(double xSpeed, double ySpeed, double rSpeed, boolean fieldOriented) {
-        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                fieldOriented
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed * polarityChooserX.getSelected(),
-                                ySpeed * polarityChooserY.getSelected(), rSpeed, this.getRotation2d())
-                        : new ChassisSpeeds(xSpeed, ySpeed, rSpeed));
-        this.setDesiredStates(states);
+    public Command drive(Supplier<Double> xSpeed, Supplier<Double> ySpeed, Supplier<Double> rSpeed,
+            Supplier<Boolean> fieldOriented) {
+        return run(() -> {
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                    fieldOriented.get().booleanValue()
+                            ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                    xSpeed.get().doubleValue() * polarityChooserX.getSelected(),
+                                    ySpeed.get().doubleValue() * polarityChooserY.getSelected(),
+                                    rSpeed.get().doubleValue(), this.getRotation2d())
+                            : new ChassisSpeeds(xSpeed.get().doubleValue(), ySpeed.get().doubleValue(),
+                                    rSpeed.get().doubleValue()));
+            this.setDesiredStates(states);
+        });
     }
 
     /** drive method, built for auto use */
@@ -213,9 +231,24 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
     }
 
-    // updates pose
+    // updates pose and driving
     @Override
+
     public void periodic() {
+        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                fieldOriented
+                        ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                        * polarityChooserY.getSelected(),
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5, this.getRotation2d())
+                        : new ChassisSpeeds(
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                        * polarityChooserY.getSelected(),
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5));
+        this.setDesiredStates(states);
+
         this.poseEstimator.update(
                 this.getRotation2d(), this.getSwervePosition());
         this.swervePose.accept(this.poseEstimator.getEstimatedPosition());

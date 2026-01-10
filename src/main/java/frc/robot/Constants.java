@@ -133,4 +133,19 @@ public final class Constants {
         new Translation2d(-TRACK_LENGTH / 2.0, TRACK_WIDTH / 2.0),
         new Translation2d(-TRACK_LENGTH / 2.0, -TRACK_LENGTH / 2.0));
   }
+
+  public static final class XboxButtonValues {
+    public static final int X = 0;
+    public static final int A = 1;
+    public static final int B = 2;
+    public static final int Y = 3;
+    public static final int LEFT_BUMPER = 4;
+    public static final int RIGHT_BUMPER = 5;
+    public static final int LEFT_TRIGGER = 6;
+    public static final int RIGHT_TRIGGER = 7;
+    public static final int BACK = 8;
+    public static final int START = 9;
+    public static final int LEFT_JOYSTICK_CLICK = 10;
+    public static final int RIGHT_JOYSTICK_CLICK = 11;
+  }
 }

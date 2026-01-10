@@ -15,7 +15,7 @@ public class Robot extends TimedRobot {
 		DashboardHelper.enableRegistration();
 		this.robotContainer = new RobotContainer();
 		DashboardHelper.disableRegistration();
-		CameraServer.startAutomaticCapture();
+		//CameraServer.startAutomaticCapture();
 	}
 
 	@Override
