@@ -148,4 +148,11 @@ public final class Constants {
     public static final int LEFT_JOYSTICK_CLICK = 10;
     public static final int RIGHT_JOYSTICK_CLICK = 11;
   }
+  public static final class ShooterConstants{
+    public static final int ShooterID =10;
+    public static final boolean bothSided = true;
+    public static final int ReverseMotorID = 0;
+    public static final boolean MotorReversed = false;
+    public static final boolean reverseMotorReversed = false;
+  }
 }
