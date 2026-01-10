@@ -178,7 +178,6 @@ public final class Constants {
   }
 
   public static final class ShooterConstants{
-    public static final boolean bothSided = true;
     public static final boolean MotorReversed = false;
     public static final boolean reverseMotorReversed = false;
   }
