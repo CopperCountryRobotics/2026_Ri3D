@@ -22,13 +22,14 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final class HarwareConstants {
-    //Drive Encoder Ports
+
+    // Drive Encoder Ports
     public static final int BACK_LEFT_ENCODER_PORT = 0;
     public static final int FRONT_RIGHT_ENCODER_PORT = 1;
     public static final int BACK_RIGHT_ENCODER_PORT = 2;
     public static final int FRONT_LEFT_ENCODER_PORT = 3;
 
-    //Drive CAN ids
+    // Drive CAN ids
     public static final int FRONT_RIGHT_TURN_ID = 1;
     public static final int FRONT_RIGHT_DRIVE_ID = 2;
     public static final int BACK_RIGHT_TURN_ID = 3;
@@ -39,13 +40,13 @@ public final class Constants {
     public static final int FRONT_LEFT_DRIVE_ID = 8;
     public static final int GYRO_ID = 9;
 
-     //shooter CAN ids
-     public static final int SHOOTER_ID = 10;//not set to irl motors
-     public static final int SHOOTER_FOLLOWER_ID = 11;//not set to irl motors
+     // Shooter CAN ids
+     public static final int SHOOTER_ID = 10; // Not set to irl motors
+     public static final int SHOOTER_FOLLOWER_ID = 11; // Not set to irl motors
 
-     //intake CAN ids
-    public static final int INTAKE_ID = 12;//not set to irl motors
-    public static final int INTAKE_FOLLOWER_ID = 13;//not set to irl motos
+     // Intake CAN ids
+    public static final int INTAKE_ID = 12;// Not set to irl motors
+    public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motos
   }
 
   public static final class ModuleConstants {
@@ -139,8 +140,9 @@ public final class Constants {
   }
 
   public static final class SwerveConstants {
-    public static final double TRACK_WIDTH = Units.inchesToMeters(21.75);//Was 23.75 before reducing drivetrain size
-    public static final double TRACK_LENGTH = Units.inchesToMeters(21.75);//Was 23.75 before reducing drivetrain size
+    // Take note that the perimeter rules has changed for this season's game
+    public static final double TRACK_WIDTH = Units.inchesToMeters(21.75); // Was 23.75 before reducing drivetrain size
+    public static final double TRACK_LENGTH = Units.inchesToMeters(21.75); // Was 23.75 before reducing drivetrain size
     public static final double WHEEL_RADIUS = Units.inchesToMeters(4 / 2.0);
     public static final double DRIVE_GEAR_RATIO = 300.0 / 79.0;
     public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
@@ -174,11 +176,13 @@ public final class Constants {
     public static final int LEFT_JOYSTICK_CLICK = 10;
     public static final int RIGHT_JOYSTICK_CLICK = 11;
   }
+
   public static final class ShooterConstants{
     public static final boolean bothSided = true;
     public static final boolean MotorReversed = false;
     public static final boolean reverseMotorReversed = false;
   }
+
   public static final class IntakeConstants{
     public static final int intakeSpeed = 1;
   }
