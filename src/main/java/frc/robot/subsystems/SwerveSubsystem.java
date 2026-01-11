@@ -1,10 +1,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
 // import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.config.PIDConstants;
 // import com.pathplanner.lib.config.RobotConfig;
 // import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
@@ -205,23 +209,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /** Pathplanner configuration - must be called once in Robot Container */
     public void configPathPlanner() {
-        // try {
-        //     var config = RobotConfig.fromGUISettings();
+        try {
+            var config = RobotConfig.fromGUISettings();
 
-        //     AutoBuilder.configure(
-        //             () -> getPose(),
-        //             this::resetPose,
-        //             () -> getSpeeds(),
-        //             (speeds, feedforwards) -> drive(speeds),
-        //             new PPHolonomicDriveController(
-        //                     new PIDConstants(10, 0, 0), // drive
-        //                     new PIDConstants(7, 0, 0)), // Rotation
-        //             config,
-        //             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        //             this);
-        // } catch (Exception ex) {
-        //     DriverStation.reportError("Pathplanner failed to configure", ex.getStackTrace());
-        // }
+            AutoBuilder.configure(
+                    () -> getPose(),
+                    this::resetPose,
+                    () -> getSpeeds(),
+                    (speeds, feedforwards) -> drive(speeds),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(10, 0, 0), // drive
+                            new PIDConstants(7, 0, 0)), // Rotation
+                    config,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
+        } catch (Exception ex) {
+            DriverStation.reportError("Pathplanner failed to configure", ex.getStackTrace());
+        }
     }
 
     // updates dashboard

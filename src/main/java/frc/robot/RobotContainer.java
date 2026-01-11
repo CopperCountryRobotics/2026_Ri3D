@@ -14,6 +14,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import static frc.robot.Constants.XboxButtonValues.*;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 public class RobotContainer {
 	// Joysticks
 	private final XboxController xbox = new XboxController(0);
@@ -22,20 +24,21 @@ public class RobotContainer {
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true);
 	//private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 	//private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+	private final Vision vision = new Vision();
 
 	// Sendable chooser for auton (appears on Dashboards)
-	//private final SendableChooser<Command> autoChooser;
+	private final SendableChooser<Command> autoChooser;
 
 	public RobotContainer() {
 		configBindings();
 
 		// register named commands here
 		
-		// // config pathplanner
-		// swerveSubsystem.configPathPlanner();
-		// // add auto chooser to dashboard
-		// autoChooser = AutoBuilder.buildAutoChooser();
-		// SmartDashboard.putData("Auto Chooser", autoChooser);
+		// config pathplanner
+		swerveSubsystem.configPathPlanner();
+		// add auto chooser to dashboard
+		autoChooser = AutoBuilder.buildAutoChooser();
+		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public void configBindings() {
@@ -44,6 +47,10 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return null;// autoChooser.getSelected();
+		return autoChooser.getSelected();
+	}
+
+	public void updates(){
+		vision.updateReadings();
 	}
 }

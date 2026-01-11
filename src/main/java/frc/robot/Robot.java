@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().run();
 		// RobotProvider.periodic();
 		DashboardHelper.putAllRegistries();
+		robotContainer.updates();
 	}
 
 	@Override
