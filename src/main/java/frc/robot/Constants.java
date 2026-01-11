@@ -51,8 +51,8 @@ public final class Constants {
     // Climber CAN ids
     public static final int CLIMBER_ID = 14;// Not set to irl motos
     
-    public static final int EXTENDSION_ID = 15;// Not set to irl motos
-  
+    public static final int EXTENDSION_Motor_ID = 15;// Not set to irl motos
+    public static final int EXTENDSION_ENCODER_ID = 16;
   }
 
   public static final class ModuleConstants {
@@ -187,11 +187,11 @@ public final class Constants {
     public static final int intakeSpeed = 1;
   }
   public static final class ExtentionConstants{
-    public static final int kp = 1 ;
-    public static final int ki = 0 ;
-    public static final int kd = 0 ;
+    public static final int EXTENTION_P = 1 ;
+    public static final int EXTENTION_I = 0 ;
+    public static final int EXTENTION_D = 0 ;
     public static final int MIN_EXTENTION = 0;
-    public static final int MAN_EXTENTION = 1;
+    public static final int MAX_EXTENTION = 1;
 
   }
 }
