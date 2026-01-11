@@ -47,6 +47,10 @@ public final class Constants {
      // Intake CAN ids
     public static final int INTAKE_ID = 12;// Not set to irl motors
     public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motos
+
+    // Climber CAN ids
+    public static final int CLIMBER_ID = 14;
+  
   }
 
   public static final class ModuleConstants {

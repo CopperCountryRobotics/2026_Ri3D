@@ -20,8 +20,8 @@ public class RobotContainer {
 
 	// Subsystems/custom class instiantiation
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true);
-	private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-	private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+	//private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+	//private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
 
 	// Sendable chooser for auton (appears on Dashboards)
 	//private final SendableChooser<Command> autoChooser;
