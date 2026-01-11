@@ -10,13 +10,15 @@ public class Superstructure {
     private final IntakeSubsystem intake;
     private final ClimberSubsystem climber;
     private final ShooterSubsystem shooter;
+    private final Vision vision;
 
     /**Constructor */
-    public Superstructure(SwerveSubsystem swerve, IntakeSubsystem intake, ClimberSubsystem climber, ShooterSubsystem shooter){
+    public Superstructure(SwerveSubsystem swerve, IntakeSubsystem intake, ClimberSubsystem climber, ShooterSubsystem shooter, Vision vision){
         this.swerve = swerve;
         this.intake = intake;
         this.climber = climber;
         this.shooter = shooter;
+        this.vision = vision;
     }
 
     //Land of awesomecommands
