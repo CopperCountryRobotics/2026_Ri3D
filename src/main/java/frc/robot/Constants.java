@@ -40,26 +40,31 @@ public final class Constants {
     public static final int FRONT_LEFT_DRIVE_ID = 8;
     public static final int GYRO_ID = 9;
 
+    // Shooter CAN ids
+    public static final int SHOOTER_ID = 10; // Not set to irl motors
+    public static final int SHOOTER_FOLLOWER_ID = 11; // Not set to irl motors
 
-     // Shooter CAN ids
-     public static final int SHOOTER_ID = 10; // Not set to irl motors
-     public static final int SHOOTER_FOLLOWER_ID = 11; // Not set to irl motors
-
-     // Intake CAN ids
+    // Intake CAN ids
     public static final int INTAKE_ID = 12;// Not set to irl motors
     public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motors
 
     // Climber CAN ids
     public static final int CLIMBER_ID = 14;// Not set to irl motors
-    
-    //Extension CAN ids
+
+    // Extension CAN ids
     public static final int EXTENSION_MOTOR_ID = 15;// Not set to irl motors
-    public static final int EXTENSION_ENCODER_ID = 16;//Not set to irl motors
+    public static final int EXTENSION_ENCODER_ID = 16;// Not set to irl motors
 
-    //Current limits
-    public static final int INTAKE_CURRENT_LIMIT = 20;
-    public static final int SHOOTER_CURRENT_LIMIT = 20;
+    // HOOD CAN ids
+    public static final int HOOD_MOTOR_ID = 17;
 
+    // Current limits
+    public static final int INTAKE_CURRENT_LIMIT = 30;
+    public static final int SHOOTER_CURRENT_LIMIT = 30;
+    public static final int HOOD_CURRENT_LIMIT = 30;
+
+    // encoder offsets
+    public static final double HOOD_ENCODER_OFFSET = 0;// TODO update
   }
 
   public static final class ModuleConstants {
@@ -176,7 +181,7 @@ public final class Constants {
   }
 
   public static final class XboxButtonValues {
-    //public static final int X = 0;DNE
+    // public static final int X = 0;DNE
     public static final int A = 1;
     public static final int B = 2;
     public static final int Y = 3;
@@ -190,14 +195,14 @@ public final class Constants {
     public static final int RIGHT_JOYSTICK_CLICK = 11;
   }
 
-  public static final class IntakeConstants{
+  public static final class IntakeConstants {
     public static final int intakeSpeed = 1;
   }
 
-  public static final class ExtensionConstants{
-    public static final int EXTENSION_P = 1 ;
-    public static final int EXTENSION_I = 0 ;
-    public static final int EXTENSION_D = 0 ;
+  public static final class ExtensionConstants {
+    public static final int EXTENSION_P = 1;
+    public static final int EXTENSION_I = 0;
+    public static final int EXTENSION_D = 0;
     public static final int MIN_EXTENSION = 0;
     public static final int MAX_EXTENSION = 1;
   }
