@@ -28,12 +28,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Vision;
 import frc.robot.lib.subsystems.SubsystemBase;
 
@@ -67,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase {
             "BackRight");
     private final Pigeon2 gyro = new Pigeon2(GYRO_ID);
 
-    private final XboxController xbox;
+    private final CommandXboxController xbox;
     private final boolean fieldOriented;
     private final Vision vision;
     private boolean runningDefault = true;
@@ -95,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SendableChooser<Double> polarityChooserY = new SendableChooser<>();
 
     /** Standard constructor */
-    public SwerveSubsystem(XboxController xbox, boolean fieldOriented, Vision vision) {
+    public SwerveSubsystem(CommandXboxController xbox, boolean fieldOriented, Vision vision) {
         super("Swerve", false);
 
         // this.xSpeed = ()-> xSpeed.get() * 2;
@@ -207,6 +207,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+
         System.out.println("A");
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
     }
@@ -219,7 +220,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public Command temp() {
         runningDefault = false;
         return run(() -> {
-            if (xbox.getAButtonPressed()) {
+            System.out.println("temp is running");
+            if (xbox.a().getAsBoolean()) {
                 SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
                         MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                 * polarityChooserX.getSelected(),

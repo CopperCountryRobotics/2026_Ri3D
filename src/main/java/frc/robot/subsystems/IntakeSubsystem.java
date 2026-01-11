@@ -54,7 +54,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // extension configs
         encoder = new ThriftyEncoder(EXTENSION_ENCODER_ID);
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
-        config.pid0.pid.setPID(EXTENSION_P, EXTENSION_I, EXTENSION_D);
+        config.pid0.pid.setPID(0, 0, 0);//TODO tune
         toPosition = new InstantCommand(() -> config.pid0.pid.calculate(encoder.getPosition(), extSetpoint), this);
         setDefaultCommand(toPosition);
 

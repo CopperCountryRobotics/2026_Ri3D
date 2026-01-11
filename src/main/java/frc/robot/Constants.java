@@ -177,29 +177,11 @@ public final class Constants {
         new Translation2d(-TRACK_LENGTH / 2.0, -TRACK_LENGTH / 2.0));
   }
 
-  public static final class XboxButtonValues {
-    // public static final int X = 0;DNE
-    public static final int A = 1;
-    public static final int B = 2;
-    public static final int Y = 3;
-    public static final int LEFT_BUMPER = 4;
-    public static final int RIGHT_BUMPER = 5;
-    public static final int LEFT_TRIGGER = 6;
-    public static final int RIGHT_TRIGGER = 7;
-    public static final int BACK = 8;
-    public static final int START = 9;
-    public static final int LEFT_JOYSTICK_CLICK = 10;
-    public static final int RIGHT_JOYSTICK_CLICK = 11;
-  }
-
   public static final class IntakeConstants {
     public static final int intakeSpeed = 1;
   }
 
   public static final class ExtensionConstants {
-    public static final int EXTENSION_P = 1;
-    public static final int EXTENSION_I = 0;
-    public static final int EXTENSION_D = 0;
     public static final int MIN_EXTENSION = 0;
     public static final int MAX_EXTENSION = 1;
   }
