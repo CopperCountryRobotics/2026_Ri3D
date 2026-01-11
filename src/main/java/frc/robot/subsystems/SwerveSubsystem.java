@@ -222,19 +222,19 @@ public class SwerveSubsystem extends SubsystemBase {
                     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                             fieldOriented
                                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                                     * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                                     * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
                                                     + turnController.calculate(vision.getYaw()),
                                             this.getRotation2d())
                                     : new ChassisSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                                     * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                                     * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
                                                     + turnController.calculate(vision.getYaw())));
                     this.setDesiredStates(states);
                 }
@@ -250,19 +250,19 @@ public class SwerveSubsystem extends SubsystemBase {
                     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                             fieldOriented
                                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                                     * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                                     * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
                                                     + turnController.calculate(vision.getYaw()),
                                             this.getRotation2d())
                                     : new ChassisSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                                     * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                                     * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
                                                     + turnController.calculate(vision.getYaw())));
                     this.setDesiredStates(states);
                 }
@@ -305,15 +305,15 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                 fieldOriented
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
-                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                         * polarityChooserY.getSelected(),
-                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5, this.getRotation2d())
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9, this.getRotation2d())
                         : new ChassisSpeeds(
-                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
-                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                         * polarityChooserY.getSelected(),
-                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5));
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9));
         this.setDesiredStates(states);
 
         this.poseEstimator.update(
