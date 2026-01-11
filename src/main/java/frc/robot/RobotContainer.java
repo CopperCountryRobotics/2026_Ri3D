@@ -45,6 +45,8 @@ public class RobotContainer {
 		new JoystickButton(xbox, A).onTrue(swerveSubsystem.resetGyro());
 		new JoystickButton(xbox, B).onTrue(swerveSubsystem.resetPose(new Pose2d(0, 0, new Rotation2d(0))));
 		new JoystickButton(xbox, Y).onTrue(swerveSubsystem.faceAprilTag());
+		new JoystickButton(xbox, X).onTrue(swerveSubsystem.faceAprilTag());
+
 	}
 
 	public Command getAutonomousCommand() {

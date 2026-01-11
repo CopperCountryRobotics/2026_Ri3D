@@ -72,6 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Vision vision;
 
     private final PIDController turnController = new PIDController(0.4, 0, 0);
+    private final PIDController driveController = new PIDController(0.5, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -214,7 +215,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**Uses a PID controller to face tag id 1 */
-    public Command faceAprilTag() {
+    public Command centerToAprilTag() {
         return runOnce(() -> {
             Commands.run((() -> {
                 if (vision.getBestTagID() == 1) {
@@ -226,7 +227,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                             MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
                                                     * polarityChooserY.getSelected(),
                                             MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
-                                                    + turnController.calculate(vision.getPitch()),
+                                                    + turnController.calculate(vision.getYaw()),
                                             this.getRotation2d())
                                     : new ChassisSpeeds(
                                             MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
@@ -234,10 +235,38 @@ public class SwerveSubsystem extends SubsystemBase {
                                             MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
                                                     * polarityChooserY.getSelected(),
                                             MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
-                                                    + turnController.calculate(vision.getPitch())));
+                                                    + turnController.calculate(vision.getYaw())));
                     this.setDesiredStates(states);
                 }
-            }), this).until(() -> true);
+            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
+        });
+    }
+
+    /**Uses a PID controller to face tag id 1 */
+    public Command faceAprilTag() {
+        return runOnce(() -> {
+            Commands.run((() -> {
+                if (vision.getBestTagID() == 1) {
+                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                            fieldOriented
+                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                                    * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                                    + turnController.calculate(vision.getYaw()),
+                                            this.getRotation2d())
+                                    : new ChassisSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                                    * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5
+                                                    + turnController.calculate(vision.getYaw())));
+                    this.setDesiredStates(states);
+                }
+            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
         });
     }
 
