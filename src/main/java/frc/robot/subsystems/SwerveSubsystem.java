@@ -14,6 +14,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,13 +33,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Vision;
 import frc.robot.lib.subsystems.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
 import static frc.robot.Constants.HarwareConstants.*;
-
 
 import java.util.function.Supplier;
 
@@ -67,6 +69,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final XboxController xbox;
     private final boolean fieldOriented;
+    private final Vision vision;
+
+    private final PIDController turnController = new PIDController(0.4, 0, 0);
+    private final PIDController driveController = new PIDController(0.5, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -88,7 +94,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SendableChooser<Double> polarityChooserY = new SendableChooser<>();
 
     /** Standard constructor */
-    public SwerveSubsystem(XboxController xbox, boolean fieldOriented) {
+    public SwerveSubsystem(XboxController xbox, boolean fieldOriented, Vision vision) {
         super("Swerve", false);
 
         // this.xSpeed = ()-> xSpeed.get() * 2;
@@ -105,6 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         this.xbox = xbox;
         this.fieldOriented = fieldOriented;
+        this.vision = vision;
     }
 
     /** drive method, built for use with a controller */
@@ -172,7 +179,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 this.backRight.getState()
         };
     }
-
+//////
     public SwerveModulePosition[] getSwervePosition() {
         return new SwerveModulePosition[] {
                 this.frontLeft.getPosition(),
@@ -205,6 +212,62 @@ public class SwerveSubsystem extends SubsystemBase {
     public void addVisionMeasurement(
             Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
+    }
+
+    /**Uses a PID controller to face tag id 1 */
+    public Command centerToAprilTag() {
+        return runOnce(() -> {
+            Commands.run((() -> {
+                if (vision.getBestTagID() == 2) {
+                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                            fieldOriented
+                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
+                                                    * polarityChooserY.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
+                                                    + turnController.calculate(vision.getYaw()),
+                                            this.getRotation2d())
+                                    : new ChassisSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
+                                                    * polarityChooserY.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
+                                                    + turnController.calculate(vision.getYaw())));
+                    this.setDesiredStates(states);
+                }
+            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
+        });
+    }
+
+    /**Uses a PID controller to face tag id 1 */
+    public Command faceAprilTag() {
+        return runOnce(() -> {
+            Commands.run((() -> {
+                if (vision.getBestTagID() == 2) {
+                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
+                            fieldOriented
+                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
+                                                    * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
+                                                    + turnController.calculate(vision.getYaw()),
+                                            this.getRotation2d())
+                                    : new ChassisSpeeds(
+                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
+                                                    * polarityChooserX.getSelected(),
+                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
+                                                    * polarityChooserY.getSelected() + driveController.calculate(vision.getYaw()),
+                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
+                                                    + turnController.calculate(vision.getYaw())));
+                    this.setDesiredStates(states);
+                }
+            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
+        });
     }
 
     /** Pathplanner configuration - must be called once in Robot Container */
@@ -242,15 +305,15 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                 fieldOriented
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
-                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                         * polarityChooserY.getSelected(),
-                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5, this.getRotation2d())
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9, this.getRotation2d())
                         : new ChassisSpeeds(
-                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 5 * polarityChooserX.getSelected(),
-                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 5
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9 * polarityChooserX.getSelected(),
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
                                         * polarityChooserY.getSelected(),
-                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 5));
+                                MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9));
         this.setDesiredStates(states);
 
         this.poseEstimator.update(
