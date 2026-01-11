@@ -100,35 +100,65 @@ public class Vision {
         visionSim.addAprilTags(layout);
     }
 
-    public double getSkew(){
+    public double getSkew() {
         var result = camera1.getAllUnreadResults();
 
-        if (!result.isEmpty()) {
-            return result.get(camera1.getPipelineIndex()).getBestTarget().getSkew();
-        }else{
+        if (camera1.getPipelineIndex() > 0) {
+
+            if (result.get(camera1.getPipelineIndex()).hasTargets()) {
+                return result.get(camera1.getPipelineIndex()).getBestTarget().getSkew();
+            } else {
+                return 0;
+            }
+        } else {
             return 0;
         }
     }
 
-    public double getYaw(){
+    public double getYaw() {
         var result = camera1.getAllUnreadResults();
 
-        if (!result.isEmpty()) {
-            return result.get(camera1.getPipelineIndex()).getBestTarget().getYaw();
-        }else{
+        if (camera1.getPipelineIndex() > 0) {
+            if (result.get(camera1.getPipelineIndex()).hasTargets()) {
+                return result.get(camera1.getPipelineIndex()).getBestTarget().getYaw();
+            } else {
+                return 0;
+            }
+        } else {
             return 0;
         }
     }
-    
-    public double getPitch(){
+
+    public double getPitch() {
         var result = camera1.getAllUnreadResults();
 
-        if (!result.isEmpty()) {
-            return result.get(camera1.getPipelineIndex()).getBestTarget().getPitch();
-        }else{
+        if (camera1.getPipelineIndex() > 0) {
+
+            if (result.get(camera1.getPipelineIndex()).hasTargets()) {
+                return result.get(camera1.getPipelineIndex()).getBestTarget().getPitch();
+            } else {
+                return 0;
+            }
+        } else {
             return 0;
         }
     }
+
+      public int getBestTagID() {
+        var result = camera1.getAllUnreadResults();
+
+        if (camera1.getPipelineIndex() > 0) {
+
+            if (result.get(camera1.getPipelineIndex()).hasTargets()) {
+                return result.get(camera1.getPipelineIndex()).getBestTarget().getFiducialId();
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
     /** Must be called periodically! */
     public void updateReadings() {
         var results1 = camera1.getAllUnreadResults();
@@ -164,4 +194,5 @@ public class Vision {
 
         }
     }
+
 }
