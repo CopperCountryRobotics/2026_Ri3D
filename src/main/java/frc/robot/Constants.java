@@ -178,11 +178,13 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int intakeSpeed = 1;
-  }
-
-  public static final class ExtensionConstants {
+    public static final double INTAKE_SPEED = 1;
+    public static final double GATE_SPEED = 0.7;
     public static final int MIN_EXTENSION = 0;
     public static final int MAX_EXTENSION = 1;
+  }
+
+  public static final class ShooterConstants {
+    public static final double DEFAULT_HOOD_POSITION = 0.2;
   }
 }

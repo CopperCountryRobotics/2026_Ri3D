@@ -2,10 +2,10 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.thethriftybot.devices.ThriftyNova;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -18,17 +18,17 @@ import static frc.robot.Constants.HardwareConstants.*;
 public class ShooterSubsystem extends SubsystemBase {
     private final SparkMax motor;
     private SparkMax followerMotor;
-    private final SparkMax hoodMotor;
+    private final ThriftyNova hoodMotor;
 
-    private final SparkAbsoluteEncoder hoodEncoder;
+    // TODO add encoder
 
     private double setSpeed = 0;
     private double hoodSetpoint = 0;
 
     private final boolean followerEnabled = false;
 
-    private final PIDController controller = new PIDController(0, 0, 0);//TODO tune
-    private final ArmFeedforward ffeController = new ArmFeedforward(4, 0.2, 0);//TODO add kv
+    private final PIDController controller = new PIDController(0, 0, 0);// TODO tune
+    private final ArmFeedforward ffeController = new ArmFeedforward(4, 0.2, 0);// TODO add kv
 
     /** Constructor */
     public ShooterSubsystem() {
@@ -45,13 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     PersistMode.kPersistParameters);
         }
 
-        hoodMotor = new SparkMax(HOOD_MOTOR_ID, MotorType.kBrushless);
-        hoodEncoder = hoodMotor.getAbsoluteEncoder();
-        SparkMaxConfig hoodMotorConfig = new SparkMaxConfig();
-        hoodMotorConfig.smartCurrentLimit(HOOD_CURRENT_LIMIT, HOOD_CURRENT_LIMIT);
-        hoodMotorConfig.absoluteEncoder.inverted(false);
-        hoodMotorConfig.absoluteEncoder.zeroOffset(HOOD_ENCODER_OFFSET);
-        hoodMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, com.thethriftybot.devices.ThriftyNova.MotorType.NEO);
+
     }
 
     /** Command to "set and forget" the motor speed */
@@ -71,10 +66,10 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    /** returns the absolute encoder of the hood */
-    public double getHoodPosition() {
-        return hoodEncoder.getPosition();
-    }
+    // /** returns the absolute encoder of the hood */
+    // public double getHoodPosition() {
+    // return hoodEncoder.getPosition();
+    // }
 
     /** Updates the position of the hood */
     public Command setHood(double position) {
@@ -83,16 +78,18 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    /** Calculate effort for the hood motor */
-    public double getHoodEffort() {
-        return ffeController.calculate(Units.rotationsToRadians(hoodEncoder.getPosition()), hoodEncoder.getVelocity())
-                + controller.calculate(hoodEncoder.getPosition(), hoodSetpoint);
-    }
+    // /** Calculate effort for the hood motor */
+    // public double getHoodEffort() {
+    // return
+    // ffeController.calculate(Units.rotationsToRadians(hoodEncoder.getPosition()),
+    // hoodEncoder.getVelocity())
+    // + controller.calculate(hoodEncoder.getPosition(), hoodSetpoint);
+    // }
 
     @Override
     public void periodic() {
-        //update hood motor
-        //hoodMotor.setVoltage(getHoodEffort());//TODO add later
+        // update hood motor
+        // hoodMotor.setVoltage(getHoodEffort());//TODO add later
 
         // update dashboard
         SmartDashboard.putNumber("Motor speed", this.motor.getEncoder().getVelocity());

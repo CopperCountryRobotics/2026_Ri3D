@@ -16,12 +16,12 @@ public class Robot extends TimedRobot {
 		this.robotContainer = new RobotContainer();
 		DashboardHelper.disableRegistration();
 		//CameraServer.startAutomaticCapture();
+		robotContainer.setup();
 	}
 
 	@Override
 	public void robotPeriodic() {
 		CommandScheduler.getInstance().run();
-		// RobotProvider.periodic();
 		DashboardHelper.putAllRegistries();
 		robotContainer.updates();
 	}

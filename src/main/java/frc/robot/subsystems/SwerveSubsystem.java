@@ -181,7 +181,6 @@ public class SwerveSubsystem extends SubsystemBase {
         };
     }
 
-    //////
     public SwerveModulePosition[] getSwervePosition() {
         return new SwerveModulePosition[] {
                 this.frontLeft.getPosition(),
@@ -207,8 +206,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
-
-        System.out.println("A");
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
     }
 

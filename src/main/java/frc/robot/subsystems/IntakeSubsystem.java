@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.ExtensionConstants.*;
+import static frc.robot.Constants.IntakeConstants.*;
 import static frc.robot.Constants.HardwareConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase {

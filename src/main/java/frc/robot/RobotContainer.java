@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+
 import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,6 +12,8 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.ShooterConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -47,11 +50,20 @@ public class RobotContainer {
 		xbox.a().onTrue(swerve.temp());
 
 		//operator logitec
-		new JoystickButton(operatorXbox, kA.value).onTrue(null);//just and example <3
+		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
+		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 	}
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
+	}
+
+	public void setup(){
+		intake.extend();
+		intake.setGate(GATE_SPEED);
+		intake.setIntake(INTAKE_SPEED);
+		shooter.setHood(DEFAULT_HOOD_POSITION);
+		System.out.println("Setup is complete!");
 	}
 
 	public void updates() {
