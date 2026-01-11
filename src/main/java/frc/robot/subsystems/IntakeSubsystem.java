@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,11 +14,18 @@ import static frc.robot.Constants.HarwareConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase{
     public SparkMax motor;
+    private SparkMax followerMotor;
     public boolean enabled = false;
     private boolean reversed = false;
+    public boolean followerEnabled = true;
 
     public IntakeSubsystem(){
         motor = new SparkMax(INTAKE_ID, MotorType.kBrushless);
+        if (followerEnabled) {
+            followerMotor = new SparkMax(SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
+            SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
+            followerMotorConfig.follow(SHOOTER_ID,true);
+        }
     }
 
     public void setSpeed(double speed){
