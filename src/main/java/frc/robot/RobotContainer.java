@@ -1,6 +1,6 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,14 +14,17 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import static frc.robot.Constants.XboxButtonValues.*;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 public class RobotContainer {
 	// Joysticks
 	private final XboxController xbox = new XboxController(0);
 
 	// Subsystems/custom class instiantiation
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true);
-	private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-	private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+	//private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+	//private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+	private final Vision vision = new Vision();
 
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;
@@ -45,5 +48,9 @@ public class RobotContainer {
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
+	}
+
+	public void updates(){
+		vision.updateReadings();
 	}
 }
