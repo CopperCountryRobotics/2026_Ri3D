@@ -21,10 +21,10 @@ public class RobotContainer {
 	private final XboxController xbox = new XboxController(0);
 
 	// Subsystems/custom class instiantiation
-	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true);
-	//private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-	//private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+	// private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+	// private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
 	private final Vision vision = new Vision();
+	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(xbox, true, vision);
 
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;
@@ -33,7 +33,7 @@ public class RobotContainer {
 		configBindings();
 
 		// register named commands here
-		
+
 		// config pathplanner
 		swerveSubsystem.configPathPlanner();
 		// add auto chooser to dashboard
@@ -44,13 +44,17 @@ public class RobotContainer {
 	public void configBindings() {
 		new JoystickButton(xbox, A).onTrue(swerveSubsystem.resetGyro());
 		new JoystickButton(xbox, B).onTrue(swerveSubsystem.resetPose(new Pose2d(0, 0, new Rotation2d(0))));
+		new JoystickButton(xbox, Y).onTrue(swerveSubsystem.faceAprilTag());
 	}
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
 	}
 
-	public void updates(){
-		vision.updateReadings();
+	public void updates() {
+		SmartDashboard.putNumber("Cam Skew", vision.getSkew());
+		SmartDashboard.putNumber("Cam Pitch", vision.getPitch());
+		SmartDashboard.putNumber("Cam Yaw", vision.getYaw());
+		SmartDashboard.putNumber("Cam Best Tag", vision.getBestTagID());
 	}
 }
