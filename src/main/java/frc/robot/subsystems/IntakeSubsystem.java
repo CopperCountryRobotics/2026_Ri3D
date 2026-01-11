@@ -13,7 +13,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import static frc.robot.Constants.HarwareConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase{
-    public SparkMax motor;
+    public final SparkMax motor;
     private SparkMax followerMotor;
     public boolean enabled = false;
     private boolean reversed = false;

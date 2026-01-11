@@ -40,19 +40,21 @@ public final class Constants {
     public static final int FRONT_LEFT_DRIVE_ID = 8;
     public static final int GYRO_ID = 9;
 
+
      // Shooter CAN ids
      public static final int SHOOTER_ID = 10; // Not set to irl motors
      public static final int SHOOTER_FOLLOWER_ID = 11; // Not set to irl motors
 
      // Intake CAN ids
     public static final int INTAKE_ID = 12;// Not set to irl motors
-    public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motos
+    public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motors
 
     // Climber CAN ids
-    public static final int CLIMBER_ID = 14;// Not set to irl motos
+    public static final int CLIMBER_ID = 14;// Not set to irl motors
     
-    public static final int EXTENDSION_Motor_ID = 15;// Not set to irl motos
-    public static final int EXTENDSION_ENCODER_ID = 16;
+    //Extension CAN ids
+    public static final int EXTENSION_MOTOR_ID = 15;// Not set to irl motors
+    public static final int EXTENSION_ENCODER_ID = 16;//Not set to irl motors
   }
 
   public static final class ModuleConstants {
@@ -186,12 +188,12 @@ public final class Constants {
   public static final class IntakeConstants{
     public static final int intakeSpeed = 1;
   }
+
   public static final class ExtentionConstants{
     public static final int EXTENTION_P = 1 ;
     public static final int EXTENTION_I = 0 ;
     public static final int EXTENTION_D = 0 ;
     public static final int MIN_EXTENTION = 0;
     public static final int MAX_EXTENTION = 1;
-
   }
 }

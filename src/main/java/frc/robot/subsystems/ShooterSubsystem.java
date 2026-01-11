@@ -48,6 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override public void periodic(){
         //update dashboard
         SmartDashboard.putNumber("Motor speed", this.motor.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Set speed", this.motor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Set speed", setSpeed);
     }
 }

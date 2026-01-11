@@ -37,7 +37,6 @@ public abstract class SubsystemBase extends edu.wpi.first.wpilibj2.command.Subsy
     }
 
     public void recordData(double... doubles) {
-        // TODO
         if (this.fileWriter == null || this.recordDataMode) return;
         try {
             String joinedData = String.join(",", String.valueOf(doubles));
