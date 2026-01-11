@@ -55,6 +55,11 @@ public final class Constants {
     //Extension CAN ids
     public static final int EXTENSION_MOTOR_ID = 15;// Not set to irl motors
     public static final int EXTENSION_ENCODER_ID = 16;//Not set to irl motors
+
+    //Current limits
+    public static final int INTAKE_CURRENT_LIMIT = 20;
+    public static final int SHOOTER_CURRENT_LIMIT = 20;
+
   }
 
   public static final class ModuleConstants {

@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.thethriftybot.devices.ThriftyEncoder;
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
@@ -28,13 +31,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private double extSetpoint = MIN_EXTENSION;
     private double setSpeed = 0;
-    private final boolean followerEnabled = true;//TODO change based on number of motors
+    private final boolean followerEnabled = true;// TODO change based on number of motors
 
     public IntakeSubsystem() {
+        // intake configs
         intakeMotor = new SparkMax(INTAKE_ID, MotorType.kBrushless);
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
+        motorConfig.idleMode(IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(INTAKE_CURRENT_LIMIT, INTAKE_CURRENT_LIMIT);
+        intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         if (followerEnabled) {
             followerMotor = new SparkMax(SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
             SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
+            motorConfig.idleMode(IdleMode.kCoast);
+            motorConfig.smartCurrentLimit(INTAKE_CURRENT_LIMIT, INTAKE_CURRENT_LIMIT);
+
             followerMotorConfig.follow(SHOOTER_ID, true);
         }
 
@@ -46,12 +58,14 @@ public class IntakeSubsystem extends SubsystemBase {
         setDefaultCommand(toPosition);
     }
 
+    /** Command to set the extender out */
     public Command extend() {
         return runOnce(() -> {
             extSetpoint = MAX_EXTENSION;
         });
     }
 
+    /** Command to set the extender in */
     public Command retract() {
         return runOnce(() -> {
             extSetpoint = MIN_EXTENSION;
