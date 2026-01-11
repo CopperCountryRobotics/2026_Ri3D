@@ -46,6 +46,7 @@ public final class Constants {
      //intake CAN ids
     public static final int INTAKE_ID = 12;//not set to irl motors
     public static final int INTAKE_FOLLOWER_ID = 13;//not set to irl motos
+    public static final int EXTENDSION_ID = 14;
   }
 
   public static final class ModuleConstants {
@@ -180,5 +181,11 @@ public final class Constants {
   }
   public static final class IntakeConstants{
     public static final int intakeSpeed = 1;
+  }
+  public static final class ExtentionConstants{
+    public static final int kp = 1 ;
+    public static final int ki = 0 ;
+    public static final int kd = 0 ;
+
   }
 }
