@@ -1,6 +1,6 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,18 +24,18 @@ public class RobotContainer {
 	private final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
 
 	// Sendable chooser for auton (appears on Dashboards)
-	private final SendableChooser<Command> autoChooser;
+	//private final SendableChooser<Command> autoChooser;
 
 	public RobotContainer() {
 		configBindings();
 
 		// register named commands here
 		
-		// config pathplanner
-		swerveSubsystem.configPathPlanner();
-		// add auto chooser to dashboard
-		autoChooser = AutoBuilder.buildAutoChooser();
-		SmartDashboard.putData("Auto Chooser", autoChooser);
+		// // config pathplanner
+		// swerveSubsystem.configPathPlanner();
+		// // add auto chooser to dashboard
+		// autoChooser = AutoBuilder.buildAutoChooser();
+		// SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public void configBindings() {
@@ -44,6 +44,6 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return autoChooser.getSelected();
+		return null;// autoChooser.getSelected();
 	}
 }
