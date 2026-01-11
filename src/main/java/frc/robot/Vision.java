@@ -53,7 +53,7 @@ public class Vision {
     /* Pose Estimators */
     private final PhotonPoseEstimator camera1PE = new PhotonPoseEstimator(layout, poseStrat, ROBOT_TO_CAM_1);
 
-    /* Data vars */ // things we want to use/read, must be updated perioidcally and will be the
+    /* Data vars */ // things we want to use/read, must be updated periodically and will be the
                     // latest version
     public boolean target1Visible = false;
     public int target1Id = 0;

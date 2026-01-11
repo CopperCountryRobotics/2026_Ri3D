@@ -40,7 +40,7 @@ import frc.robot.lib.subsystems.SubsystemBase;
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
-import static frc.robot.Constants.HarwareConstants.*;
+import static frc.robot.Constants.HardwareConstants.*;
 
 import java.util.function.Supplier;
 

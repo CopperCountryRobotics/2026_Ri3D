@@ -6,6 +6,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class Superstructure {
+    @SuppressWarnings("unused")
     private final SwerveSubsystem swerve;
     private final IntakeSubsystem intake;
     private final ClimberSubsystem climber;

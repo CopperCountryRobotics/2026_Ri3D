@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.HarwareConstants.CLIMBER_ID;
+import static frc.robot.Constants.HardwareConstants.CLIMBER_ID;
 
 public class ClimberSubsystem extends SubsystemBase {
    private final SparkMax motor = new SparkMax(CLIMBER_ID, MotorType.kBrushless);

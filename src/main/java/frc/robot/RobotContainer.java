@@ -21,7 +21,7 @@ public class RobotContainer {
 	// Joysticks
 	private final XboxController xbox = new XboxController(0);
 
-	// Subsystems/custom class instiantiation
+	// Subsystems/custom class instantiation
 	private final Vision vision = new Vision();
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();

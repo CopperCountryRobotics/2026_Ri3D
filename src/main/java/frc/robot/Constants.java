@@ -21,7 +21,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final class HarwareConstants {
+  public static final class HardwareConstants {
 
     // Drive Encoder Ports
     public static final int BACK_LEFT_ENCODER_PORT = 0;
@@ -189,11 +189,11 @@ public final class Constants {
     public static final int intakeSpeed = 1;
   }
 
-  public static final class ExtentionConstants{
-    public static final int EXTENTION_P = 1 ;
-    public static final int EXTENTION_I = 0 ;
-    public static final int EXTENTION_D = 0 ;
-    public static final int MIN_EXTENTION = 0;
-    public static final int MAX_EXTENTION = 1;
+  public static final class ExtensionConstants{
+    public static final int EXTENSION_P = 1 ;
+    public static final int EXTENSION_I = 0 ;
+    public static final int EXTENSION_D = 0 ;
+    public static final int MIN_EXTENSION = 0;
+    public static final int MAX_EXTENSION = 1;
   }
 }

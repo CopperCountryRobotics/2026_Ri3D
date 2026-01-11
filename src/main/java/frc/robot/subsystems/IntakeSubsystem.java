@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.thethriftybot.devices.ThriftyEncoder;
+import com.thethriftybot.devices.ThriftyNova;
+import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,49 +12,70 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.IntakeConstants.*;
-import static frc.robot.Constants.HarwareConstants.*;
+import static frc.robot.Constants.ExtensionConstants.*;
+import static frc.robot.Constants.HardwareConstants.*;
 
-public class IntakeSubsystem extends SubsystemBase{
-    public final SparkMax motor;
+public class IntakeSubsystem extends SubsystemBase {
+    // motor controllers
+    private final ThriftyNova extensionMotor;
+    public final SparkMax intakeMotor;
     private SparkMax followerMotor;
-    public boolean enabled = false;
-    private boolean reversed = false;
-    public boolean followerEnabled = true;
 
-    public IntakeSubsystem(){
-        motor = new SparkMax(INTAKE_ID, MotorType.kBrushless);
+    private final ThriftyEncoder encoder;
+    ThriftyNovaConfig config = new ThriftyNovaConfig();
+
+    Command toPosition;
+
+    private double extSetpoint = MIN_EXTENSION;
+    private double setSpeed = 0;
+    private final boolean followerEnabled = true;//TODO change based on number of motors
+
+    public IntakeSubsystem() {
+        intakeMotor = new SparkMax(INTAKE_ID, MotorType.kBrushless);
         if (followerEnabled) {
             followerMotor = new SparkMax(SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
             SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
-            followerMotorConfig.follow(SHOOTER_ID,true);
+            followerMotorConfig.follow(SHOOTER_ID, true);
         }
+
+        // extension configs
+        encoder = new ThriftyEncoder(EXTENSION_ENCODER_ID);
+        extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
+        config.pid0.pid.setPID(EXTENSION_P, EXTENSION_I, EXTENSION_D);
+        toPosition = new InstantCommand(() -> config.pid0.pid.calculate(encoder.getPosition(), extSetpoint), this);
+        setDefaultCommand(toPosition);
     }
 
-    public void setSpeed(double speed){
-        motor.set(reversed?-speed:speed);
+    public Command extend() {
+        return runOnce(() -> {
+            extSetpoint = MAX_EXTENSION;
+        });
     }
 
-    public void enable(){
-        enabled = true;
-        setSpeed(intakeSpeed);
+    public Command retract() {
+        return runOnce(() -> {
+            extSetpoint = MIN_EXTENSION;
+        });
     }
 
-    public void disable(){
-        enabled = true;
-        setSpeed(0);
+    /** run once command to set the intake motor speed */
+    public Command setIntake(double speed) {
+        return runOnce(() -> {
+            intakeMotor.set(speed);
+        });
     }
 
-    public Command toggle(){
-        if (enabled) {
-            return new InstantCommand(()->disable(), this);
-        }else{
-            return new InstantCommand(()->enable(), this);
-        }
+    /** Run end command to run the intake motor - upon ending will stop */
+    public Command runIntake(double speed) {
+        return runEnd(() -> {
+            intakeMotor.set(speed);
+        }, () -> {
+            intakeMotor.set(0);
+        });
     }
-    
+
     @Override
-    public void periodic(){
-        SmartDashboard.putBoolean("intake enabled", enabled);
+    public void periodic() {
+        SmartDashboard.putNumber("intake set speed", setSpeed);
     }
 }

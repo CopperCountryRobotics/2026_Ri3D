@@ -11,6 +11,7 @@ import static frc.robot.Constants.SwerveConstants.WHEEL_RADIUS;
 public class SwerveSpark extends SparkMax {
     private final double GEAR_RATIO;
 
+    @SuppressWarnings("removal")
     public SwerveSpark(int id, boolean reverse, boolean isDrive, double gearRatio) {
         super(id, MotorType.kBrushless);
         SparkMaxConfig config = new SparkMaxConfig();
