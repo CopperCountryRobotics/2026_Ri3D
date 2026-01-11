@@ -179,7 +179,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 this.backRight.getState()
         };
     }
-
+//////
     public SwerveModulePosition[] getSwervePosition() {
         return new SwerveModulePosition[] {
                 this.frontLeft.getPosition(),
@@ -218,7 +218,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public Command centerToAprilTag() {
         return runOnce(() -> {
             Commands.run((() -> {
-                if (vision.getBestTagID() == 1) {
+                if (vision.getBestTagID() == 2) {
                     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                             fieldOriented
                                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -246,7 +246,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public Command faceAprilTag() {
         return runOnce(() -> {
             Commands.run((() -> {
-                if (vision.getBestTagID() == 1) {
+                if (vision.getBestTagID() == 2) {
                     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                             fieldOriented
                                     ? ChassisSpeeds.fromFieldRelativeSpeeds(

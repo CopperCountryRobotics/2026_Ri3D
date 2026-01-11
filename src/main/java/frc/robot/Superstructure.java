@@ -22,4 +22,10 @@ public class Superstructure {
     }
 
     //Land of awesomecommands
+
+//     public double calculateV(double distance, double theta, double height){
+//         if(!distance*Math.tan(theta)-height)>0){}
+//        return (distance/Math.cos(theta))* Math.sqrt(9.8/(2*(distance*Math.tan(theta)-height)));
+
+//     }
 }
