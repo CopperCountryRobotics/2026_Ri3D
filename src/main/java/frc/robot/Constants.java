@@ -49,7 +49,9 @@ public final class Constants {
     public static final int INTAKE_FOLLOWER_ID = 13;// Not set to irl motos
 
     // Climber CAN ids
-    public static final int CLIMBER_ID = 14;
+    public static final int CLIMBER_ID = 14;// Not set to irl motos
+    
+    public static final int EXTENDSION_ID = 15;// Not set to irl motos
   
   }
 
