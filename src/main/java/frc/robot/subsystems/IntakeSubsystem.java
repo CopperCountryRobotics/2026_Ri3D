@@ -23,6 +23,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final ThriftyNova extensionMotor;
     public final SparkMax intakeMotor;
     private SparkMax followerMotor;
+    private final SparkMax gateMotor;
 
     private final ThriftyEncoder encoder;
     ThriftyNovaConfig config = new ThriftyNovaConfig();
@@ -56,6 +57,9 @@ public class IntakeSubsystem extends SubsystemBase {
         config.pid0.pid.setPID(EXTENSION_P, EXTENSION_I, EXTENSION_D);
         toPosition = new InstantCommand(() -> config.pid0.pid.calculate(encoder.getPosition(), extSetpoint), this);
         setDefaultCommand(toPosition);
+
+        //Gate motor configs
+        gateMotor = new SparkMax(GATE_MOTOR_ID, MotorType.kBrushless);
     }
 
     /** Command to set the extender out */
@@ -85,6 +89,13 @@ public class IntakeSubsystem extends SubsystemBase {
             intakeMotor.set(speed);
         }, () -> {
             intakeMotor.set(0);
+        });
+    }
+
+    /**run once command to set the speed of the gate motor */
+    public Command setGate(double speed){
+        return runOnce(()->{
+            gateMotor.set(speed);
         });
     }
 
