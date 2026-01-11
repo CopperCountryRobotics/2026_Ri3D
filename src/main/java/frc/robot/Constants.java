@@ -186,6 +186,8 @@ public final class Constants {
     public static final int kp = 1 ;
     public static final int ki = 0 ;
     public static final int kd = 0 ;
+    public static final int MIN_EXTENTION = 0;
+    public static final int MAN_EXTENTION = 1;
 
   }
 }
