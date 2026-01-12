@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -32,7 +34,6 @@ public class RobotContainer {
 	private final LEDSubsystem leds = new LEDSubsystem();
 	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision, leds);
 
-
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;
 
@@ -55,6 +56,11 @@ public class RobotContainer {
 		//operator logitec
 		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
 		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
+
+		// testing ledsubsystem
+		new JoystickButton(operatorXbox, kRightBumper.value).onTrue(leds.setColor(new Color(new Color8Bit("#ffffff")), "Matrix"));
+		new JoystickButton(operatorXbox, kStart.value).onTrue(leds.setColor(new Color(new Color8Bit("#00ff00")), "Matrix"));
+		new JoystickButton(operatorXbox, kLeftBumper.value).onTrue(leds.nextSequence());
 	}
 
 	public Command getAutonomousCommand() {

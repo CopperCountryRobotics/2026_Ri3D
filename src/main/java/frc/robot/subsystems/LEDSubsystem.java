@@ -13,6 +13,9 @@ public class LEDSubsystem extends SubsystemBase {
     private final ConnectorX cX;
     private boolean cxConnected = false;
 
+    private int sequenceID = 0;
+    private String[] sequences = {"test1", "test2", "test3", "test4", "test5", "test6", "test7"};
+
     /** Constructor */
     public LEDSubsystem() {
         cX = new ConnectorX();
@@ -34,6 +37,15 @@ public class LEDSubsystem extends SubsystemBase {
             cX.leds.SetImageSequence(sequenceName)
                 .ForZone(zoneId)
                 .RunOnce(false);
+        });
+    }
+
+    /** Command to progress through the predefined list of sequences zone */
+    public Command nextSequence() {
+        return runOnce(() -> {
+            setSequence(sequences[sequenceID], "Matrix");
+            sequenceID++;
+            if (sequenceID > sequences.length) sequenceID = 0;
         });
     }
 
