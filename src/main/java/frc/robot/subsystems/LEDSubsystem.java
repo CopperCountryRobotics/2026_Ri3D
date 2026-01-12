@@ -14,7 +14,7 @@ public class LEDSubsystem extends SubsystemBase {
     private boolean cxConnected = false;
 
     private int sequenceID = 0;
-    private String[] sequences = {"test1", "test2", "test3", "test4", "test5", "test6", "test7"};
+    private String[] sequences = {"Star", "CCR"};
 
     /** Constructor */
     public LEDSubsystem() {
