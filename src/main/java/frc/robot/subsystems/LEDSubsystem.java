@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.lumynlabs.devices.ConnectorX;
+import com.lumynlabs.domain.event.Status;
 import com.lumynlabs.connection.usb.USBPort;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +22,8 @@ public class LEDSubsystem extends SubsystemBase {
         cX = new ConnectorX();
         cxConnected = cX.Connect(USBPort.kUSB1);
 
-        cX.leds.SetColor("Matrix", new Color(new Color8Bit("#ffcd00")));
+
+        cX.leds.SetColor("matrix", new Color(new Color8Bit("ffcd00")));
     }
 
     /** Command to set the color of a zone */
@@ -43,7 +45,7 @@ public class LEDSubsystem extends SubsystemBase {
     /** Command to progress through the predefined list of sequences zone */
     public Command nextSequence() {
         return runOnce(() -> {
-            setSequence(sequences[sequenceID], "Matrix");
+            setSequence(sequences[sequenceID], "matrix");
             sequenceID++;
             if (sequenceID >= sequences.length) sequenceID = 0;
         });
@@ -52,6 +54,7 @@ public class LEDSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // update dashboard
+        cxConnected = cX.IsConnected();
         SmartDashboard.putBoolean("led connected", cxConnected);
     }
 }
