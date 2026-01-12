@@ -12,16 +12,14 @@ public class Superstructure {
     @SuppressWarnings("unused")
     private final SwerveSubsystem swerve;
     private final IntakeSubsystem intake;
-    private final ClimberSubsystem climber;
     private final ShooterSubsystem shooter;
     private final Vision vision;
 
     /** Constructor */
-    public Superstructure(SwerveSubsystem swerve, IntakeSubsystem intake, ClimberSubsystem climber,
+    public Superstructure(SwerveSubsystem swerve, IntakeSubsystem intake,
             ShooterSubsystem shooter, Vision vision) {
         this.swerve = swerve;
         this.intake = intake;
-        this.climber = climber;
         this.shooter = shooter;
         this.vision = vision;
     }

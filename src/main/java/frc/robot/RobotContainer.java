@@ -27,8 +27,8 @@ public class RobotContainer {
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
 	private final IntakeSubsystem intake = new IntakeSubsystem();
-	private final ClimberSubsystem climber = new ClimberSubsystem();
-	private final Superstructure superstructure = new Superstructure(swerve, intake, climber, shooter, vision);
+	//private final ClimberSubsystem climber = new ClimberSubsystem();
+	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision);
 
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;

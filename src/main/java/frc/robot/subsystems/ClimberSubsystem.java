@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.thethriftybot.devices.ThriftyNova;
+import com.thethriftybot.devices.ThriftyNova.MotorType;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -11,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.HardwareConstants.CLIMBER_ID;
 
 public class ClimberSubsystem extends SubsystemBase {
-   private final SparkMax motor = new SparkMax(CLIMBER_ID, MotorType.kBrushless);
+   private final ThriftyNova motor = new ThriftyNova(CLIMBER_ID, MotorType.NEO);
    private double setpoint = 0;
 
    private final PIDController controller = new PIDController(0, 0, 0);
@@ -29,13 +30,13 @@ public class ClimberSubsystem extends SubsystemBase {
 
    /**method to calculate effort with controllers */
    private double calculateEffort(){
-      return ffeController.calculate(0) + controller.calculate(motor.getEncoder().getPosition(), setpoint);
+      return ffeController.calculate(0) + controller.calculate(motor.getPosition(), setpoint);
    }
 
     @Override
     public void periodic(){
       //motor.setVoltage(calculateEffort());//TODO add when testing irl
-      SmartDashboard.putNumber("Climber height", motor.getEncoder().getPosition());
+      SmartDashboard.putNumber("Climber height", motor.getPosition());
       SmartDashboard.putNumber("Climber setpoint", setpoint);
     }
 }
