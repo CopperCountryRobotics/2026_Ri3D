@@ -12,19 +12,12 @@ public class IntakeSubsystem extends SubsystemBase {
     // motor controllers
     private final ThriftyNova extensionMotor;
     public final ThriftyNova intakeMotor;
-    private final ThriftyNova gateMotor;
 
     private double setSpeed = 0;
 
     public IntakeSubsystem() {
-        // intake configs
         intakeMotor = new ThriftyNova(INTAKE_ID);
-
-        // extension configs
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
-
-        // Gate motor configs
-        gateMotor = new ThriftyNova(GATE_MOTOR_ID);
     }
 
     /** run once command to set the intake motor speed */
@@ -43,12 +36,6 @@ public class IntakeSubsystem extends SubsystemBase {
         });
     }
 
-    /** run once command to set the speed of the gate motor */
-    public Command setGate(double speed) {
-        return runOnce(() -> {
-            gateMotor.set(speed);
-        });
-    }
 
     /**
      * run end command to run the extension motor - upon ending will stop and enter

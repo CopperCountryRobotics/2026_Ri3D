@@ -14,6 +14,7 @@ import static frc.robot.Constants.HardwareConstants.*;
 public class ShooterSubsystem extends SubsystemBase {
     private final ThriftyNova motor;
     private final ThriftyNova hoodMotor;
+    private final ThriftyNova gateMotor;
 
     private double setSpeed = 0;
     private double hoodSetpoint = 0;
@@ -25,10 +26,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem() {
         motor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
+        gateMotor = new ThriftyNova(GATE_MOTOR_ID);
     }
 
-    /** Command to "set and forget" the motor speed */
-    public Command setSpeed(double speed) {
+    /** Command to "set and forget" the shooter motor speed */
+    public Command setShooter(double speed) {
         return runOnce(() -> {
             motor.set(speed);
             setSpeed = speed;
@@ -41,6 +43,13 @@ public class ShooterSubsystem extends SubsystemBase {
             motor.set(speed);
         }, () -> {
             motor.set(0);
+        });
+    }
+    
+    /** run once command to set the speed of the gate motor */
+    public Command setGate(double speed) {
+        return runOnce(() -> {
+            gateMotor.set(speed);
         });
     }
 
@@ -61,6 +70,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return ffeController.calculate(Units.rotationsToRadians(hoodMotor.getPosition()),
                 hoodMotor.getVelocity())
                 + controller.calculate(hoodMotor.getPosition(), hoodSetpoint);
+    }
+
+    public Command testHoodMotor(double speed) {
+        return runEnd(() -> {
+            hoodMotor.set(speed);
+        }, () -> {
+            hoodMotor.set(0);
+        });
     }
 
     @Override
