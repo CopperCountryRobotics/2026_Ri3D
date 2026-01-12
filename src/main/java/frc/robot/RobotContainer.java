@@ -50,16 +50,26 @@ public class RobotContainer {
 		//driver xbox
 		xbox.a().onTrue(swerve.temp());
 
-		//operator logitec
-		new JoystickButton(operatorXbox, kA.value).onTrue(new InstantCommand(() -> {
-			intake.setIntake(INTAKE_SPEED);
-			intake.extend();
-		}));
+		//operator 
+		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
+		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 
-		new JoystickButton(operatorXbox, kA.value).onFalse(new InstantCommand(() -> {
-			intake.setIntake(0);
-			intake.retract();
-		}));
+		/**
+		 * Because the robot compresses balls like Wall-E, we can't do this ):
+		 */
+		// When the operator presses A, extend motor and start spinning
+		// new JoystickButton(operatorXbox, kA.value).onTrue(new InstantCommand(() -> {
+		// 	intake.setIntake(INTAKE_SPEED);
+		// 	intake.extend();
+		// }));
+
+		// // When the operator releases A, retract the motor and stop spinning
+		// new JoystickButton(operatorXbox, kA.value).onFalse(new InstantCommand(() -> {
+		// 	intake.setIntake(0);
+		// 	intake.retract();
+		// }));
+
+
 
 		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 	}
