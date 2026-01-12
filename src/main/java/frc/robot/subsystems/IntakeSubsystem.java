@@ -7,6 +7,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.thethriftybot.devices.ThriftyEncoder;
 import com.thethriftybot.devices.ThriftyNova;
+import com.thethriftybot.devices.ThriftyNova.CurrentType;
 import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -21,9 +22,9 @@ import static frc.robot.Constants.HardwareConstants.*;
 public class IntakeSubsystem extends SubsystemBase {
     // motor controllers
     private final ThriftyNova extensionMotor;
-    public final SparkMax intakeMotor;
-    private SparkMax followerMotor;
-    private final SparkMax gateMotor;
+    public final ThriftyNova intakeMotor;
+    private ThriftyNova followerMotor;
+    private final ThriftyNova gateMotor;
 
     private final ThriftyEncoder encoder;
     ThriftyNovaConfig config = new ThriftyNovaConfig();
@@ -36,19 +37,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         // intake configs
-        intakeMotor = new SparkMax(INTAKE_ID, MotorType.kBrushless);
-        SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig.idleMode(IdleMode.kCoast);
-        motorConfig.smartCurrentLimit(INTAKE_CURRENT_LIMIT, INTAKE_CURRENT_LIMIT);
-        intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeMotor = new ThriftyNova(INTAKE_ID);
+        ThriftyNovaConfig motorConfig = new ThriftyNovaConfig();
+        intakeMotor.setBrakeMode(false);
+        intakeMotor.setMaxCurrent(CurrentType.STATOR, INTAKE_CURRENT_LIMIT);
+        intakeMotor.setMaxCurrent(CurrentType.SUPPLY, INTAKE_CURRENT_LIMIT);
+        // intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         if (followerEnabled) {
-            followerMotor = new SparkMax(SHOOTER_FOLLOWER_ID, MotorType.kBrushless);
-            SparkMaxConfig followerMotorConfig = new SparkMaxConfig();
-            motorConfig.idleMode(IdleMode.kCoast);
-            motorConfig.smartCurrentLimit(INTAKE_CURRENT_LIMIT, INTAKE_CURRENT_LIMIT);
-
-            followerMotorConfig.follow(SHOOTER_ID, true);
+            followerMotor = new ThriftyNova(SHOOTER_FOLLOWER_ID);
+            ThriftyNovaConfig followerMotorConfig = new ThriftyNovaConfig();
+            followerMotor.setBrakeMode(false);
+            followerMotor.setMaxCurrent(CurrentType.STATOR, INTAKE_CURRENT_LIMIT);
+            followerMotor.setMaxCurrent(CurrentType.SUPPLY, INTAKE_CURRENT_LIMIT);
+            followerMotor.follow(INTAKE_ID);
         }
 
         // extension configs
@@ -59,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
         setDefaultCommand(toPosition);
 
         //Gate motor configs
-        gateMotor = new SparkMax(GATE_MOTOR_ID, MotorType.kBrushless);
+        gateMotor = new ThriftyNova(GATE_MOTOR_ID);
     }
 
     /** Command to set the extender out */

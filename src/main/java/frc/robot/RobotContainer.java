@@ -6,6 +6,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -50,7 +51,16 @@ public class RobotContainer {
 		xbox.a().onTrue(swerve.temp());
 
 		//operator logitec
-		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
+		new JoystickButton(operatorXbox, kA.value).onTrue(new InstantCommand(() -> {
+			intake.setIntake(INTAKE_SPEED);
+			intake.extend();
+		}));
+
+		new JoystickButton(operatorXbox, kA.value).onFalse(new InstantCommand(() -> {
+			intake.setIntake(0);
+			intake.retract();
+		}));
+
 		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 	}
 
