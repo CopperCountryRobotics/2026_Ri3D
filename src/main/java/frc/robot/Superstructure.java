@@ -41,9 +41,17 @@ public class Superstructure {
     }
 
     // autons because pathplanner doesnt work
-    public Command leftAuto() {
+    public Command leftAuto() {//TODO fix
         return Commands.sequence(
-                swerve.autoDrive(0.5,1 , 0).withTimeout(2.4),
+                swerve.autoDrive(0.5,1 , 0).withTimeout(1.5),
+                swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
+                swerve.autoDrive(0, 0, 0));
+    }
+
+      // autons because pathplanner doesnt work
+    public Command rightAuto() {//TODO fix
+        return Commands.sequence(
+                swerve.autoDrive(-0.5,1 , 0).withTimeout(1.5),
                 swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
                 swerve.autoDrive(0, 0, 0));
     }

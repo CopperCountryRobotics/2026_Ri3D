@@ -40,9 +40,13 @@ public class RobotContainer {
 		// register named commands here
 
 		// config pathplanner
-		swerve.configPathPlanner();
+		//swerve.configPathPlanner();
 		// add auto chooser to dashboard
-		autoChooser = AutoBuilder.buildAutoChooser();
+		//autoChooser = AutoBuilder.buildAutoChooser();
+		autoChooser = new SendableChooser<>();
+		autoChooser.addOption("Left Auto", superstructure.leftAuto());
+		autoChooser.addOption("Right Auto", superstructure.rightAuto());
+
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
@@ -59,7 +63,7 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return superstructure.leftAuto();//autoChooser.getSelected();
+		return autoChooser.getSelected();
 	}
 
 	public void setup() {
