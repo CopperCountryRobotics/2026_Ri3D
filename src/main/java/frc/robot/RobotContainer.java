@@ -30,6 +30,7 @@ public class RobotContainer {
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
 	private final IntakeSubsystem intake = new IntakeSubsystem();
+
 	//private final ClimberSubsystem climber = new ClimberSubsystem(); //add if need be
 	private final LEDSubsystem leds = new LEDSubsystem();
 	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision, leds);
@@ -43,17 +44,24 @@ public class RobotContainer {
 		// register named commands here
 
 		// config pathplanner
-		swerve.configPathPlanner();
+		//swerve.configPathPlanner();
 		// add auto chooser to dashboard
-		autoChooser = AutoBuilder.buildAutoChooser();
+		//autoChooser = AutoBuilder.buildAutoChooser();
+		autoChooser = new SendableChooser<>();
+		autoChooser.addOption("Left Auto", superstructure.leftAuto());
+		autoChooser.addOption("Right Auto", superstructure.rightAuto());
+
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public void configBindings() {
-		//driver xbox
-		xbox.a().onTrue(swerve.temp());
+		// driver xbox
+		// xbox.a().whileTrue(intake.runExtension(0.5));
+		// xbox.b().whileTrue(shooter.setGate(0.5));
+		// xbox.x().whileTrue(shooter.runShooter(0.5));
+		// xbox.y().whileTrue(shooter.testHoodMotor(0.5));
 
-		//operator logitec
+		// operator logitec
 		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
 		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 
@@ -67,11 +75,11 @@ public class RobotContainer {
 		return autoChooser.getSelected();
 	}
 
-	public void setup(){
-		intake.extend();
-		intake.setGate(GATE_SPEED);
+	public void setup() {
 		intake.setIntake(INTAKE_SPEED);
+		shooter.setGate(GATE_SPEED);
 		shooter.setHood(DEFAULT_HOOD_POSITION);
+		superstructure.setupExtension(2);// TODO tune
 		System.out.println("Setup is complete!");
 	}
 
