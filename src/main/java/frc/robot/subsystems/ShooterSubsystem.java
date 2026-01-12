@@ -88,5 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // update dashboard
         SmartDashboard.putNumber("Motor speed", this.motor.getVelocity());
         SmartDashboard.putNumber("Set speed", setSpeed);
+        SmartDashboard.putNumber("Hood setpoint", hoodSetpoint);
+        SmartDashboard.putNumber("Hood encoder", hoodMotor.getPosition());
     }
 }

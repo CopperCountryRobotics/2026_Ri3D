@@ -43,8 +43,8 @@ public class Superstructure {
     // autons because pathplanner doesnt work
     public Command leftAuto() {
         return Commands.sequence(
-                swerve.autoDrive(1,2 , 0).withTimeout(1.2),
-                swerve.autoDrive(0, 0, 1).withTimeout(0.4),
+                swerve.autoDrive(0.5,1 , 0).withTimeout(2.4),
+                swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
                 swerve.autoDrive(0, 0, 0));
     }
 }
