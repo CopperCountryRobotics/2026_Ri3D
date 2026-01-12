@@ -48,10 +48,10 @@ public class RobotContainer {
 
 	public void configBindings() {
 		// driver xbox
-		xbox.a().whileTrue(intake.runExtension(0.5));
-		xbox.b().whileTrue(shooter.setGate(0.5));
-		xbox.x().whileTrue(shooter.runShooter(0.5));
-		xbox.y().whileTrue(shooter.testHoodMotor(0.5));
+		// xbox.a().whileTrue(intake.runExtension(0.5));
+		// xbox.b().whileTrue(shooter.setGate(0.5));
+		// xbox.x().whileTrue(shooter.runShooter(0.5));
+		// xbox.y().whileTrue(shooter.testHoodMotor(0.5));
 
 		// operator logitec
 		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
@@ -59,7 +59,7 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return autoChooser.getSelected();
+		return superstructure.leftAuto();//autoChooser.getSelected();
 	}
 
 	public void setup() {

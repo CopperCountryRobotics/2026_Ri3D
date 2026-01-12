@@ -66,7 +66,7 @@ public class SwerveModule implements IDashboardProvider {
         SmartDashboard.putNumber(this.moduleName + "/desiredAngle", desiredState.angle.getRotations());
         SmartDashboard.putNumber(this.moduleName + "/turnVoltage", turnVoltage);
 
-        this.drive.setVoltage(MathUtil.applyDeadband(driveVoltage * 2.5, 0.05));
+        this.drive.setVoltage(MathUtil.clamp(MathUtil.applyDeadband(driveVoltage * 4, 0.05),-9.,9));
         this.turn.setVoltage(MathUtil.applyDeadband(turnVoltage * 3, 0.05));
     }
 

@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -35,15 +36,15 @@ public class Superstructure {
         return (distance / Math.cos(theta)) * Math.sqrt(9.8 / (2 * (distance * Math.tan(theta) - height)));
     }
 
-    public Command setupExtension(double time){
+    public Command setupExtension(double time) {
         return intake.runExtension(0.7).withTimeout(time);
     }
 
-    // public Commands j(){
-    //     return Commands.sequence(
-            
-    //         ).until(()->true);
-    // }
-
-
+    // autons because pathplanner doesnt work
+    public Command leftAuto() {
+        return Commands.sequence(
+                swerve.autoDrive(1,2 , 0).withTimeout(1.2),
+                swerve.autoDrive(0, 0, 1).withTimeout(0.4),
+                swerve.autoDrive(0, 0, 0));
+    }
 }
