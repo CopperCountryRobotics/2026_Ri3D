@@ -30,6 +30,22 @@ public class LEDSubsystem extends SubsystemBase {
         cX.leds.SetColor("Matrix", new Color(new Color8Bit("#ffcd00")));
     }
 
+    /** Command to set the color of a zone */
+    public Command setColor(Color color, String zoneId) {
+        return runOnce(() -> {
+            cX.leds.SetColor(zoneId, color);
+        });
+    }
+
+    /** Command to set a looping sequence of a zone */
+    public Command setSequence(String sequenceName, String zoneId) {
+        return runOnce(() -> {
+            cX.leds.SetImageSequence(sequenceName)
+                .ForZone(zoneId)
+                .RunOnce(false);
+        });
+    }
+
     @Override
     public void periodic() {
         // update dashboard
