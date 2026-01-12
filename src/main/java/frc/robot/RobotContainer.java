@@ -27,7 +27,7 @@ public class RobotContainer {
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
 	private final IntakeSubsystem intake = new IntakeSubsystem();
-	//private final ClimberSubsystem climber = new ClimberSubsystem();
+	//private final ClimberSubsystem climber = new ClimberSubsystem(); //add if need be
 	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision);
 
 	// Sendable chooser for auton (appears on Dashboards)
@@ -71,5 +71,6 @@ public class RobotContainer {
 		SmartDashboard.putNumber("Cam Pitch", vision.getPitch());
 		SmartDashboard.putNumber("Cam Yaw", vision.getYaw());
 		SmartDashboard.putNumber("Cam Best Tag", vision.getBestTagID());
+		vision.updateReadings();
 	}
 }

@@ -157,7 +157,7 @@ public class Vision {
         }
     }
 
-    /** Must be called periodically! */
+    /** Must be called periodically to update vars */
     public void updateReadings() {
         var results1 = camera1.getAllUnreadResults();
         Optional<EstimatedRobotPose> estPose1 = Optional.empty();

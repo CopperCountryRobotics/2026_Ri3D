@@ -307,7 +307,6 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-       // if (runningDefault) {
             SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                     fieldOriented
                             ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -327,6 +326,5 @@ public class SwerveSubsystem extends SubsystemBase {
             this.poseEstimator.update(
                     this.getRotation2d(), this.getSwervePosition());
             this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
-       // }
     }
 }
