@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -34,15 +32,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Vision;
-import frc.robot.lib.subsystems.SubsystemBase;
-
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.GYRO_ID;
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
-import static frc.robot.Constants.HardwareConstants.*;
-
-import java.util.function.Supplier;
+import frc.robot.Vision;
+import frc.robot.lib.subsystems.SubsystemBase;
 
 /**
  * Swerve Subsystem class that creates a swerve drivetrain using Swerve
@@ -70,11 +77,11 @@ public class SwerveSubsystem extends SubsystemBase {
     private final CommandXboxController xbox;
     private final boolean fieldOriented;
     private final Vision vision;
-    private boolean runningDefault = true;
     public boolean foundTag = false;
     public double measurement = 0;
+    public double rot;
 
-    private final PIDController turnController = new PIDController(0.4, 0, 0);
+    private final PIDController turnController = new PIDController(2, 0, 0);
     private final PIDController driveController = new PIDController(0.5, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
@@ -139,9 +146,9 @@ public class SwerveSubsystem extends SubsystemBase {
         this.setDesiredStates(states);
     }
 
-    /**returns the gyro but (-360,360) */
+    /** returns the gyro but (-360,360) */
     public double getHeading() {
-        return this.gyro.getRotation2d().getDegrees()%360;
+        return this.gyro.getRotation2d().getDegrees() % 360;
     }
 
     public Rotation2d getRotation2d() {
@@ -217,30 +224,11 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
-    public Command searchForTag(int tagID){
+    public Command searchForTag(int tagID) {
         foundTag = false;
-        return run(()->{
-            if(vision.getBestTagID() == tagID){
-                measurement = vision.getYaw() + getHeading()%360;
-            }
-        });
-    }
-
-    public Command temp() {
-        runningDefault = false;
         return run(() -> {
-            System.out.println("temp is running");
-            if (xbox.a().getAsBoolean()) {
-                SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                        MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                * polarityChooserX.getSelected(),
-                        MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                * polarityChooserY.getSelected(),
-                        MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                + turnController.calculate(vision.getYaw()),
-                        this.getRotation2d()));
-            } else {
-                runningDefault = true;
+            if (vision.getBestTagID() == tagID) {
+                measurement = vision.getYaw() + getHeading() % 360;
             }
         });
     }
@@ -287,7 +275,7 @@ public class SwerveSubsystem extends SubsystemBase {
                     (speeds, feedforwards) -> drive(speeds),
                     new PPHolonomicDriveController(
                             new PIDConstants(10, 0, 0), // drive
-                            new PIDConstants(7, 0, 0)), // Rotation
+                            new PIDConstants(10, 0, 0)), // Rotation
                     config,
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                     this);
@@ -303,28 +291,62 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
     }
 
-    // updates pose and driving
-    @Override
+    public double getRot() {
+        if (xbox.a().getAsBoolean()) {
+            if (vision.getBestTagID() == 2) {
+                var rotGoal = vision.getYaw() - getHeading();
+                return MathUtil.applyDeadband(turnController.calculate(rotGoal, getHeading()), 2);
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
 
-    public void periodic() {
+    public Command autoDrive(double x, double y, double rot) {
+        return run(() -> {
             SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                    fieldOriented
-                            ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                            * polarityChooserX.getSelected(),
-                                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                            * polarityChooserY.getSelected(),
-                                    MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9, this.getRotation2d())
-                            : new ChassisSpeeds(
-                                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                            * polarityChooserX.getSelected(),
-                                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                            * polarityChooserY.getSelected(),
-                                    MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9));
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            MathUtil.applyDeadband(y, DEAD_BAND) * 9,
+                            MathUtil.applyDeadband(x, DEAD_BAND) * 9,
+                            MathUtil.applyDeadband(-rot, DEAD_BAND) * 9,
+                            this.getRotation2d()));
             this.setDesiredStates(states);
 
-            this.poseEstimator.update(
-                    this.getRotation2d(), this.getSwervePosition());
-            this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
+        });
+    }
+
+    private double speedMultiplier = 0.6;
+
+    // updates pose and driving
+    @Override
+    public void periodic() {
+        if (DriverStation.isTeleopEnabled()) {
+            if (xbox.leftTrigger().getAsBoolean()) {
+                speedMultiplier = 1;
+            } else if (xbox.rightTrigger().getAsBoolean()) {
+                speedMultiplier = 3;
+            } else {
+                speedMultiplier = 2;
+            }
+
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserX.getSelected(),
+                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserY.getSelected(),
+                    -(getRot() + MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
+                    this.getRotation2d()));
+            this.setDesiredStates(states);
+        }
+
+        this.poseEstimator.update(
+                this.getRotation2d(), this.getSwervePosition());
+        this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
+        SmartDashboard.putNumber("Calculated rot", getRot());
+        SmartDashboard.putNumber("Swerve Pose X", this.getPose().getX());
+        SmartDashboard.putNumber("Swerve Pose Y", this.getPose().getY());
+
     }
 }

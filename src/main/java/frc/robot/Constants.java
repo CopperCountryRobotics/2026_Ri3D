@@ -41,19 +41,16 @@ public final class Constants {
     public static final int GYRO_ID = 9;
 
     // Shooter CAN ids
-    public static final int SHOOTER_ID = 10; // Not set to irl motors
-    public static final int SHOOTER_FOLLOWER_ID = 11; // Not set to irl motors
-    public static final int HOOD_MOTOR_ID = 12;
+    public static final int HOOD_MOTOR_ID = 10;
+    public static final int SHOOTER_ID = 11;
 
     // Intake CAN ids
-    public static final int INTAKE_ID = 13;// Not set to irl motors
-    public static final int INTAKE_FOLLOWER_ID = 14;// Not set to irl motors
-    public static final int GATE_MOTOR_ID = 15;
-    public static final int EXTENSION_MOTOR_ID = 16;// Not set to irl motors
-    public static final int EXTENSION_ENCODER_ID = 17;// Not set to irl motors
+    public static final int GATE_MOTOR_ID = 12;
+    public static final int INTAKE_ID = 13;
+    public static final int EXTENSION_MOTOR_ID = 14;
 
     // Climber CAN ids
-    public static final int CLIMBER_ID = 18;// Not set to irl motors
+    public static final int CLIMBER_ID = 15;
 
     // Current limits
     public static final int INTAKE_CURRENT_LIMIT = 30;
@@ -164,7 +161,7 @@ public final class Constants {
     public static final int MAX_DRIVE_VOLTAGE = 12;
     public static final int MAX_TURN_VOLTAGE = 8;
 
-    public static final double MAX_SPEED = 2.0;
+    public static final double MAX_SPEED = Units.feetToMeters(15.1);
     public static final double MAX_ACCELERATION = 10.0;
     public static final double MAX_ANGULAR_ACCELERATION = 10.0;
 
