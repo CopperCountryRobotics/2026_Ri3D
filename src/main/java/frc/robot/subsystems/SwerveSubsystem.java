@@ -71,6 +71,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private final boolean fieldOriented;
     private final Vision vision;
     private boolean runningDefault = true;
+    public boolean foundTag = false;
+    public double measurement = 0;
 
     private final PIDController turnController = new PIDController(0.4, 0, 0);
     private final PIDController driveController = new PIDController(0.5, 0, 0);
@@ -137,8 +139,9 @@ public class SwerveSubsystem extends SubsystemBase {
         this.setDesiredStates(states);
     }
 
+    /**returns the gyro but (-360,360) */
     public double getHeading() {
-        return this.gyro.getRotation2d().getDegrees();
+        return this.gyro.getRotation2d().getDegrees()%360;
     }
 
     public Rotation2d getRotation2d() {
@@ -214,6 +217,15 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
+    public Command searchForTag(int tagID){
+        foundTag = false;
+        return run(()->{
+            if(vision.getBestTagID() == tagID){
+                measurement = vision.getYaw() + getHeading()%360;
+            }
+        });
+    }
+
     public Command temp() {
         runningDefault = false;
         return run(() -> {
@@ -230,34 +242,6 @@ public class SwerveSubsystem extends SubsystemBase {
             } else {
                 runningDefault = true;
             }
-        });
-    }
-
-    /** Uses a PID controller to face tag id 1 */
-    public Command centerToAprilTag() {
-        return runOnce(() -> {
-            Commands.run((() -> {
-                if (vision.getBestTagID() == 2) {
-                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                            fieldOriented
-                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw()),
-                                            this.getRotation2d())
-                                    : new ChassisSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw())));
-                    this.setDesiredStates(states);
-                }
-            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
         });
     }
 
@@ -323,7 +307,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        if (runningDefault) {
+       // if (runningDefault) {
             SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                     fieldOriented
                             ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -343,6 +327,6 @@ public class SwerveSubsystem extends SubsystemBase {
             this.poseEstimator.update(
                     this.getRotation2d(), this.getSwervePosition());
             this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
-        }
+       // }
     }
 }

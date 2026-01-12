@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -24,7 +26,6 @@ public class Superstructure {
         this.vision = vision;
     }
 
-    // Land of awesomecommands
     /**
      * 
      * @param distance from target along the ground (ignores height) in meters
@@ -37,6 +38,13 @@ public class Superstructure {
         if (!((distance * Math.tan(theta) - height) > 0)) {
         }
         return (distance / Math.cos(theta)) * Math.sqrt(9.8 / (2 * (distance * Math.tan(theta) - height)));
-
     }
+
+    // public Commands j(){
+    //     return Commands.sequence(
+            
+    //         ).until(()->true);
+    // }
+
+
 }

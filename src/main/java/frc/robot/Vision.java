@@ -6,7 +6,6 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -18,7 +17,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
-import java.util.List;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.RobotBase;
@@ -33,7 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Vision {
     /* Constants */
-    public static final String CAM_1_NAME = "camera1";
+    public static final String CAM_1_NAME = "PC_Camera";
 
     public final static Transform3d ROBOT_TO_CAM_1 = new Transform3d(
             new Translation3d(0.33, 0.33, 0.02),
