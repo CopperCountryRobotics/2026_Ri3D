@@ -1,36 +1,36 @@
 package frc.robot;
 
-//import com.pathplanner.lib.auto.AutoBuilder;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+
+import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import static frc.robot.Constants.XboxButtonValues.*;
+import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.ShooterConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer {
 	// Joysticks
-	private final XboxController xbox = new XboxController(0);
+	private final CommandXboxController xbox = new CommandXboxController(0);
+	private final XboxController operatorXbox = new XboxController(1);
 
 	// Subsystems/custom class instantiation
 	private final Vision vision = new Vision();
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
 	private final IntakeSubsystem intake = new IntakeSubsystem();
-	private final ClimberSubsystem climber = new ClimberSubsystem();
+	//private final ClimberSubsystem climber = new ClimberSubsystem(); //add if need be
 	private final LEDSubsystem leds = new LEDSubsystem();
-
-	private final Superstructure superstructure = new Superstructure(swerve, intake, climber, shooter, vision, leds);
+	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision, leds);
 
 
 	// Sendable chooser for auton (appears on Dashboards)
@@ -49,15 +49,24 @@ public class RobotContainer {
 	}
 
 	public void configBindings() {
-		new JoystickButton(xbox, A).onTrue(swerve.resetGyro());
-		new JoystickButton(xbox, B).onTrue(swerve.resetPose(new Pose2d(0, 0, new Rotation2d(0))));
-		new JoystickButton(xbox, Y).onTrue(swerve.faceAprilTag());
-		//new JoystickButton(xbox, X).onTrue(swerve.centerToAprilTag());
-		//0 DNE
+		//driver xbox
+		xbox.a().onTrue(swerve.temp());
+
+		//operator logitec
+		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
+		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 	}
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
+	}
+
+	public void setup(){
+		intake.extend();
+		intake.setGate(GATE_SPEED);
+		intake.setIntake(INTAKE_SPEED);
+		shooter.setHood(DEFAULT_HOOD_POSITION);
+		System.out.println("Setup is complete!");
 	}
 
 	public void updates() {
@@ -65,5 +74,6 @@ public class RobotContainer {
 		SmartDashboard.putNumber("Cam Pitch", vision.getPitch());
 		SmartDashboard.putNumber("Cam Yaw", vision.getYaw());
 		SmartDashboard.putNumber("Cam Best Tag", vision.getBestTagID());
+		vision.updateReadings();
 	}
 }

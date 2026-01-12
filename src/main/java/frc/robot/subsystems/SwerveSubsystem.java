@@ -28,12 +28,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Vision;
 import frc.robot.lib.subsystems.SubsystemBase;
 
@@ -67,10 +67,12 @@ public class SwerveSubsystem extends SubsystemBase {
             "BackRight");
     private final Pigeon2 gyro = new Pigeon2(GYRO_ID);
 
-    private final XboxController xbox;
+    private final CommandXboxController xbox;
     private final boolean fieldOriented;
     private final Vision vision;
     private boolean runningDefault = true;
+    public boolean foundTag = false;
+    public double measurement = 0;
 
     private final PIDController turnController = new PIDController(0.4, 0, 0);
     private final PIDController driveController = new PIDController(0.5, 0, 0);
@@ -95,7 +97,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SendableChooser<Double> polarityChooserY = new SendableChooser<>();
 
     /** Standard constructor */
-    public SwerveSubsystem(XboxController xbox, boolean fieldOriented, Vision vision) {
+    public SwerveSubsystem(CommandXboxController xbox, boolean fieldOriented, Vision vision) {
         super("Swerve", false);
 
         // this.xSpeed = ()-> xSpeed.get() * 2;
@@ -137,8 +139,9 @@ public class SwerveSubsystem extends SubsystemBase {
         this.setDesiredStates(states);
     }
 
+    /**returns the gyro but (-360,360) */
     public double getHeading() {
-        return this.gyro.getRotation2d().getDegrees();
+        return this.gyro.getRotation2d().getDegrees()%360;
     }
 
     public Rotation2d getRotation2d() {
@@ -181,7 +184,6 @@ public class SwerveSubsystem extends SubsystemBase {
         };
     }
 
-    //////
     public SwerveModulePosition[] getSwervePosition() {
         return new SwerveModulePosition[] {
                 this.frontLeft.getPosition(),
@@ -207,7 +209,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
-        System.out.println("A");
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
     }
 
@@ -216,10 +217,20 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
+    public Command searchForTag(int tagID){
+        foundTag = false;
+        return run(()->{
+            if(vision.getBestTagID() == tagID){
+                measurement = vision.getYaw() + getHeading()%360;
+            }
+        });
+    }
+
     public Command temp() {
         runningDefault = false;
         return run(() -> {
-            if (xbox.getAButtonPressed()) {
+            System.out.println("temp is running");
+            if (xbox.a().getAsBoolean()) {
                 SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
                         MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
                                 * polarityChooserX.getSelected(),
@@ -231,34 +242,6 @@ public class SwerveSubsystem extends SubsystemBase {
             } else {
                 runningDefault = true;
             }
-        });
-    }
-
-    /** Uses a PID controller to face tag id 1 */
-    public Command centerToAprilTag() {
-        return runOnce(() -> {
-            Commands.run((() -> {
-                if (vision.getBestTagID() == 2) {
-                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                            fieldOriented
-                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw()),
-                                            this.getRotation2d())
-                                    : new ChassisSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw())));
-                    this.setDesiredStates(states);
-                }
-            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
         });
     }
 
@@ -324,7 +307,6 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        if (runningDefault) {
             SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
                     fieldOriented
                             ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -344,6 +326,5 @@ public class SwerveSubsystem extends SubsystemBase {
             this.poseEstimator.update(
                     this.getRotation2d(), this.getSwervePosition());
             this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
-        }
     }
 }
