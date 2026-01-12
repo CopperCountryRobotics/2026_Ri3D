@@ -59,10 +59,10 @@ public class RobotContainer {
 	}
 
 	public void setup(){
-		intake.extend();
-		intake.setGate(GATE_SPEED);
 		intake.setIntake(INTAKE_SPEED);
+		intake.setGate(GATE_SPEED);
 		shooter.setHood(DEFAULT_HOOD_POSITION);
+		superstructure.setupExtension(2);//TODO tune
 		System.out.println("Setup is complete!");
 	}
 

@@ -38,6 +38,10 @@ public class Superstructure {
         return (distance / Math.cos(theta)) * Math.sqrt(9.8 / (2 * (distance * Math.tan(theta) - height)));
     }
 
+    public Command setupExtension(double time){
+        return intake.runExtension(0.7).withTimeout(time);
+    }
+
     // public Commands j(){
     //     return Commands.sequence(
             
