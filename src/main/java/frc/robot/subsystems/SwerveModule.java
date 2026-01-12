@@ -5,12 +5,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import static frc.robot.Constants.SwerveConstants.DRIVE_GEAR_RATIO;
+import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
+import static frc.robot.Constants.SwerveConstants.TURN_GEAR_RATIO;
 import frc.robot.lib.encoder.SwerveEncoder;
 import frc.robot.lib.helpers.IDashboardProvider;
 import frc.robot.lib.motors.SwerveSpark;
-import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
-import static frc.robot.Constants.SwerveConstants.TURN_GEAR_RATIO;
-import static frc.robot.Constants.SwerveConstants.DRIVE_GEAR_RATIO;
 
 /** Utils class to create a swerve module object for Neo motors */
 public class SwerveModule implements IDashboardProvider {
@@ -66,8 +66,8 @@ public class SwerveModule implements IDashboardProvider {
         SmartDashboard.putNumber(this.moduleName + "/desiredAngle", desiredState.angle.getRotations());
         SmartDashboard.putNumber(this.moduleName + "/turnVoltage", turnVoltage);
 
-        this.drive.setVoltage(MathUtil.clamp(MathUtil.applyDeadband(driveVoltage * 4, 0.05),-9.,9));
-        this.turn.setVoltage(MathUtil.applyDeadband(turnVoltage * 3, 0.05));
+        this.drive.setVoltage(MathUtil.clamp((driveVoltage * 12), -12., 12));
+        this.turn.setVoltage(MathUtil.clamp((turnVoltage * 12), -12, 12));
     }
 
     public void stop() {

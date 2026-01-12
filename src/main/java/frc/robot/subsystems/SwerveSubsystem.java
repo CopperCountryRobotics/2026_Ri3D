@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -28,22 +26,30 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Vision;
-import frc.robot.lib.subsystems.SubsystemBase;
-
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.BACK_LEFT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.BACK_RIGHT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.FRONT_LEFT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_DRIVE_ID;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_ENCODER_PORT;
+import static frc.robot.Constants.HardwareConstants.FRONT_RIGHT_TURN_ID;
+import static frc.robot.Constants.HardwareConstants.GYRO_ID;
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
-import static frc.robot.Constants.HardwareConstants.*;
-
-import java.util.function.Supplier;
+import frc.robot.Vision;
+import frc.robot.lib.subsystems.SubsystemBase;
 
 /**
  * Swerve Subsystem class that creates a swerve drivetrain using Swerve
@@ -311,28 +317,27 @@ public class SwerveSubsystem extends SubsystemBase {
         });
     }
 
-    private double speedAndPower = 0.6;
+    private double speedMultiplier = 0.6;
 
     // updates pose and driving
     @Override
     public void periodic() {
         if (DriverStation.isTeleopEnabled()) {
             if (xbox.leftTrigger().getAsBoolean()) {
-                speedAndPower = 0.2;
+                speedMultiplier = 1;
             } else if (xbox.rightTrigger().getAsBoolean()) {
-                speedAndPower = 3;
+                speedMultiplier = 3;
             } else {
-                speedAndPower = 0.8;
+                speedMultiplier = 2;
             }
 
-            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                    ChassisSpeeds.fromFieldRelativeSpeeds(
-                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 2 * speedAndPower
-                                    * polarityChooserX.getSelected(),
-                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 2 * speedAndPower
-                                    * polarityChooserY.getSelected(),
-                            -(getRot() + MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 2 * speedAndPower),
-                            this.getRotation2d()));
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserX.getSelected(),
+                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserY.getSelected(),
+                    -(getRot() + MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
+                    this.getRotation2d()));
             this.setDesiredStates(states);
         }
 

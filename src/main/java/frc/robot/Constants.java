@@ -161,7 +161,7 @@ public final class Constants {
     public static final int MAX_DRIVE_VOLTAGE = 12;
     public static final int MAX_TURN_VOLTAGE = 8;
 
-    public static final double MAX_SPEED = 2.0;
+    public static final double MAX_SPEED = Units.feetToMeters(15.1);
     public static final double MAX_ACCELERATION = 10.0;
     public static final double MAX_ANGULAR_ACCELERATION = 10.0;
 
