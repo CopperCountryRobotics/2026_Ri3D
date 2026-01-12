@@ -45,8 +45,8 @@ public final class Constants {
     public static final int SHOOTER_ID = 11;
 
     // Intake CAN ids
-    public static final int INTAKE_ID = 12;
-    public static final int GATE_MOTOR_ID = 13;
+    public static final int GATE_MOTOR_ID = 12;
+    public static final int INTAKE_ID = 13;
     public static final int EXTENSION_MOTOR_ID = 14;
 
     // Climber CAN ids
