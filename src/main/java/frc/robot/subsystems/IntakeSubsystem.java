@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.thethriftybot.devices.ThriftyEncoder;
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.CurrentType;
+import com.thethriftybot.devices.ThriftyNova.PIDSlot;
 import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -42,7 +43,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.setBrakeMode(false);
         intakeMotor.setMaxCurrent(CurrentType.STATOR, INTAKE_CURRENT_LIMIT);
         intakeMotor.setMaxCurrent(CurrentType.SUPPLY, INTAKE_CURRENT_LIMIT);
-        // intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         if (followerEnabled) {
             followerMotor = new ThriftyNova(SHOOTER_FOLLOWER_ID);
@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
         encoder = new ThriftyEncoder(EXTENSION_ENCODER_ID);
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
         config.pid0.pid.setPID(0, 0, 0);//TODO tune
-        toPosition = new InstantCommand(() -> config.pid0.pid.calculate(encoder.getPosition(), extSetpoint), this);
+        toPosition = new InstantCommand(() -> extensionMotor.usePIDSlot(PIDSlot.SLOT0));
         setDefaultCommand(toPosition);
 
         //Gate motor configs
