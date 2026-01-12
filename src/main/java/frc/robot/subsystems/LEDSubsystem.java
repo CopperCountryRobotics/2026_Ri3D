@@ -45,7 +45,7 @@ public class LEDSubsystem extends SubsystemBase {
         return runOnce(() -> {
             setSequence(sequences[sequenceID], "Matrix");
             sequenceID++;
-            if (sequenceID > sequences.length) sequenceID = 0;
+            if (sequenceID >= sequences.length) sequenceID = 0;
         });
     }
 
