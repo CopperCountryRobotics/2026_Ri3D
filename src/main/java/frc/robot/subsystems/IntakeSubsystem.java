@@ -1,23 +1,11 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.thethriftybot.devices.ThriftyEncoder;
 import com.thethriftybot.devices.ThriftyNova;
-import com.thethriftybot.devices.ThriftyNova.CurrentType;
-import com.thethriftybot.devices.ThriftyNova.PIDSlot;
-import com.thethriftybot.devices.ThriftyNova.ThriftyNovaConfig;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.IntakeConstants.*;
 import static frc.robot.Constants.HardwareConstants.*;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -35,7 +23,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // extension configs
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
 
-        //Gate motor configs
+        // Gate motor configs
         gateMotor = new ThriftyNova(GATE_MOTOR_ID);
     }
 
@@ -55,18 +43,21 @@ public class IntakeSubsystem extends SubsystemBase {
         });
     }
 
-    /**run once command to set the speed of the gate motor */
-    public Command setGate(double speed){
-        return runOnce(()->{
+    /** run once command to set the speed of the gate motor */
+    public Command setGate(double speed) {
+        return runOnce(() -> {
             gateMotor.set(speed);
         });
     }
 
-    /**run end command to run the extension motor - upon ending will stop and enter brake mode */
-    public Command runExtension(double output){
-        return runEnd(()->{
+    /**
+     * run end command to run the extension motor - upon ending will stop and enter
+     * brake mode
+     */
+    public Command runExtension(double output) {
+        return runEnd(() -> {
             extensionMotor.set(output);
-        }, ()->{
+        }, () -> {
             extensionMotor.set(0);
             extensionMotor.setBrakeMode(true);
         });
