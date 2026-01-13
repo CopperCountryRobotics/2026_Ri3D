@@ -57,7 +57,13 @@ public class RobotContainer {
 		xbox.b().whileTrue(superstructure.shoot()).onFalse(superstructure.stopShoot());
 		xbox.x().onTrue(shooter.setHood(5));
 		xbox.y().onTrue(shooter.setHood(4));
+		xbox.a().onTrue(shooter.setHood(3));
 		xbox.rightBumper().onTrue(shooter.setHood(0));
+		xbox.povDown().onTrue(shooter.setHood(5.3));
+		xbox.povLeft().onTrue(shooter.setHood(7));
+		xbox.povRight().onTrue(shooter.setHood(5.8));
+		xbox.povUp().onTrue(shooter.setHood(5.5));
+		xbox.back().onTrue(shooter.setHood(6));
 
 
 		// xbox.b().whileTrue(shooter.setGate(0.5));
