@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.HardwareConstants.*;
 
@@ -29,7 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command to "set and forget" the shooter motor speed */
     public Command setShooter(double speed) {
         return runOnce(() -> {
-            motor.set(speed);
+            motor.setVelocity(speed);
             setSpeed = speed;
         });
     }
@@ -37,27 +38,14 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command with end statement to set the motor speed to zero */
     public Command runShooter(double speed) {
         return runEnd(() -> {
-            motor.set(speed);
+            motor.setVelocity(speed);
         }, () -> {
-            motor.set(0);
+            motor.setVelocity(0);
         });
     }
 
-        /** Command with end statement to set the motor speed to zero */
-    public Command shoot(double speed) {
-        return runEnd(() -> {
-            motor.set(speed);
-            gateMotor.set(speed*0.7);
-
-        }, () -> {
-            motor.set(0);
-                        gateMotor.set(0);
-
-        });
-    }
-
-    /** returns the shooter motos speed in revolutions per second */
-    public double getShooterSpeed(){
+    /** returns the shooter motors speed in revolutions per second */
+    public double getShooterSpeed() {
         return motor.getVelocity();
     }
 
@@ -73,6 +61,15 @@ public class ShooterSubsystem extends SubsystemBase {
         return hoodMotor.getPosition() * 360;
     }
 
+    /** zeros the position of the hood */
+    public Command zeroHood(double position) {
+        return runOnce(() -> {
+            hoodMotor.set(-0.2);
+            Commands.waitSeconds(3);
+            hoodMotor.setEncoderPosition(0);
+        });
+    }
+
     /** Updates the position of the hood */
     public Command setHood(double position) {
         return runOnce(() -> {
@@ -80,16 +77,8 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    public Command testHoodMotor(double speed) {
-        return runEnd(() -> {
-            hoodMotor.set(speed);
-        }, () -> {
-            hoodMotor.set(0);
-        });
-    }
-
-    public Command killHoodMotor(){
-        return runOnce(()->{
+    public Command killHoodMotor() {
+        return runOnce(() -> {
             hoodMotor.disable();
         });
     }
