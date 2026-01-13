@@ -2,7 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import static edu.wpi.first.wpilibj2.command.Commands.*;
+
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -40,18 +43,40 @@ public class Superstructure {
         return intake.runExtension(0.7).withTimeout(time);
     }
 
+    public Command shoot() {
+        return sequence(
+                shooter.setShooter(ShooterConstants.SHOOTER_SPEED),
+                waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.05),
+                shooter.setGate(ShooterConstants.GATE_SPEED),
+                intake.setConveyor(IntakeConstants.CONVEYER_SPEED));
+    }
+
+    public Command stopShoot() {
+        return sequence(
+                shooter.setShooter(0),
+                shooter.setGate(0),
+                intake.setConveyor(0));
+    }
+
+    public Command intake() {
+        return sequence(
+                shooter.setGate(0),
+                intake.setConveyor(0), // TODO consider a low speed
+                intake.setIntake(IntakeConstants.INTAKE_SPEED));
+    }
+
     // autons because pathplanner doesnt work
-    public Command leftAuto() {//TODO fix
-        return Commands.sequence(
-                swerve.autoDrive(0.5,1 , 0).withTimeout(1.5),
+    public Command leftAuto() {// TODO fix
+        return sequence(
+                swerve.autoDrive(0.5, 1, 0).withTimeout(1.5),
                 swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
                 swerve.autoDrive(0, 0, 0));
     }
 
-      // autons because pathplanner doesnt work
-    public Command rightAuto() {//TODO fix
-        return Commands.sequence(
-                swerve.autoDrive(-0.5,1 , 0).withTimeout(1.5),
+    // autons because pathplanner doesnt work
+    public Command rightAuto() {// TODO fix
+        return sequence(
+                swerve.autoDrive(-0.5, 1, 0).withTimeout(1.5),
                 swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
                 swerve.autoDrive(0, 0, 0));
     }

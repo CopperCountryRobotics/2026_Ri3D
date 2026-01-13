@@ -19,14 +19,11 @@ public class ShooterSubsystem extends SubsystemBase {
     private double setSpeed = 0;
     private double hoodSetpoint = 0;
 
-    private final PIDController controller = new PIDController(0, 0, 0);// TODO tune
-    private final ArmFeedforward ffeController = new ArmFeedforward(4, 0.2, 0);// TODO add kv
-
     /** Constructor */
     public ShooterSubsystem() {
         motor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
-        gateMotor = new ThriftyNova(GATE_MOTOR_ID);
+        gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
     }
 
     /** Command to "set and forget" the shooter motor speed */
@@ -45,7 +42,25 @@ public class ShooterSubsystem extends SubsystemBase {
             motor.set(0);
         });
     }
-    
+
+        /** Command with end statement to set the motor speed to zero */
+    public Command shoot(double speed) {
+        return runEnd(() -> {
+            motor.set(speed);
+            gateMotor.set(speed*0.7);
+
+        }, () -> {
+            motor.set(0);
+                        gateMotor.set(0);
+
+        });
+    }
+
+    /** returns the shooter motos speed in revolutions per second */
+    public double getShooterSpeed(){
+        return motor.getVelocity();
+    }
+
     /** run once command to set the speed of the gate motor */
     public Command setGate(double speed) {
         return runOnce(() -> {
@@ -61,15 +76,8 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Updates the position of the hood */
     public Command setHood(double position) {
         return runOnce(() -> {
-            hoodSetpoint = position;
+            hoodMotor.setPosition(position);
         });
-    }
-
-    /** Calculate effort for the hood motor */
-    public double getHoodEffort() {
-        return ffeController.calculate(Units.rotationsToRadians(hoodMotor.getPosition()),
-                hoodMotor.getVelocity())
-                + controller.calculate(hoodMotor.getPosition(), hoodSetpoint);
     }
 
     public Command testHoodMotor(double speed) {
@@ -80,10 +88,14 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
+    public Command killHoodMotor(){
+        return runOnce(()->{
+            hoodMotor.disable();
+        });
+    }
+
     @Override
     public void periodic() {
-        // update hood motor
-        // hoodMotor.setVoltage(getHoodEffort());//TODO add later
 
         // update dashboard
         SmartDashboard.putNumber("Motor speed", this.motor.getVelocity());

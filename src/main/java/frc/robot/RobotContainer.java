@@ -7,6 +7,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -27,10 +28,10 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
-	private final IntakeSubsystem intake = new IntakeSubsystem();
-	// private final ClimberSubsystem climber = new ClimberSubsystem(); //add if
-	// need be
-	private final Superstructure superstructure = new Superstructure(swerve, intake, shooter, vision);
+	 private final IntakeSubsystem intake = new IntakeSubsystem();
+
+	 private final Superstructure superstructure = new Superstructure(swerve,
+	intake, shooter, vision);
 
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;
@@ -45,23 +46,31 @@ public class RobotContainer {
 		// add auto chooser to dashboard
 		// autoChooser = AutoBuilder.buildAutoChooser();
 		autoChooser = new SendableChooser<>();
-		autoChooser.addOption("Left Auto", superstructure.leftAuto());
-		autoChooser.addOption("Right Auto", superstructure.rightAuto());
+		// autoChooser.addOption("Left Auto", superstructure.leftAuto());
+		// autoChooser.addOption("Right Auto", superstructure.rightAuto());
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
 	public void configBindings() {
 		// driver xbox
-		// xbox.a().whileTrue(intake.runExtension(0.5));
-		// xbox.b().whileTrue(shooter.setGate(0.5));
-		xbox.x().whileTrue(swerve.faceAprilTag()
-				.until(() -> swerve.goalRot != 0 && MathUtil.isNear(swerve.goalRot, swerve.yaw, 5)));
-		xbox.y().whileTrue(intake.runConveyor(0.5));
+		xbox.b().whileTrue(superstructure.shoot()).onFalse(superstructure.stopShoot());
+		xbox.x().onTrue(shooter.setHood(5));
+		xbox.y().onTrue(shooter.setHood(4));
+		xbox.rightBumper().onTrue(shooter.setHood(0));
 
-		// operator logitec
-		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
-		new JoystickButton(operatorXbox, kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
+
+		// xbox.b().whileTrue(shooter.setGate(0.5));
+		// // xbox.x().whileTrue(swerve.faceAprilTag()
+		// // .until(() -> swerve.goalRot != 0 && MathUtil.isNear(swerve.goalRot,
+		// swerve.yaw, 5)));
+		// // xbox.y().whileTrue(intake.runConveyor(0.5));
+
+		// // operator logitec
+		// new JoystickButton(operatorXbox,
+		// kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
+		// new JoystickButton(operatorXbox,
+		// kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 	}
 
 	public Command getAutonomousCommand() {
@@ -69,10 +78,10 @@ public class RobotContainer {
 	}
 
 	public void setup() {
-		intake.setIntake(INTAKE_SPEED);
-		shooter.setGate(GATE_SPEED);
-		shooter.setHood(DEFAULT_HOOD_POSITION);
-		superstructure.setupExtension(2);// TODO tune
+		// intake.setIntake(INTAKE_SPEED);
+		// shooter.setGate(GATE_SPEED);
+		// shooter.setHood(DEFAULT_HOOD_POSITION);
+		// superstructure.setupExtension(2);// TODO tune
 		System.out.println("Setup is complete!");
 	}
 
