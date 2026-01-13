@@ -1,11 +1,15 @@
 package frc.robot;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -16,9 +20,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import static edu.wpi.first.math.util.Units.degreesToRadians;
-
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,7 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Vision {
     /* Constants */
-    public static final String CAM_1_NAME = "PC_Camera";
+    public static final String CAM_1_NAME = "Camera1";
 
     public final static Transform3d ROBOT_TO_CAM_1 = new Transform3d(
             new Translation3d(0.33, 0.33, 0.02),
@@ -99,18 +100,35 @@ public class Vision {
     }
 
     public double getSkew() {
-        var result = camera1.getAllUnreadResults();
+        var result = camera1.getLatestResult();
 
-        if (camera1.getPipelineIndex() > 0) {
-
-            if (result.get(camera1.getPipelineIndex()).hasTargets()) {
-                return result.get(camera1.getPipelineIndex()).getBestTarget().getSkew();
-            } else {
-                return 0;
-            }
+        if (result.hasTargets()){
+            List<PhotonTrackedTarget> targets = result.getTargets();
+            PhotonTrackedTarget target = result.getBestTarget();
+            SmartDashboard.putNumber("Skew", target.getSkew());
+           return target.getSkew();
         } else {
+            SmartDashboard.putNumber("Skew", 0);
             return 0;
         }
+        // //System.out.println("Skew method is running");
+        // System.out.println("pipeline index is " + camera1.getPipelineIndex());
+
+        // if (camera1.getPipelineIndex() > 0) {
+        //     System.out.println("pipeline index exists");
+
+        //     if (result.get(camera1.getPipelineIndex()).hasTargets()) {
+        //         System.out.println("Skew method has targets");
+
+        //         return result.get(camera1.getPipelineIndex()).getBestTarget().getSkew();
+        //     } else {
+        //         System.out.println("Skew method has NO targets");
+
+        //         return 0;
+        //     }
+        // } else {
+        //     return 0;
+        //}
     }
 
     public double getYaw() {
@@ -142,7 +160,7 @@ public class Vision {
         }
     }
 
-      public int getBestTagID() {
+    public int getBestTagID() {
         var result = camera1.getAllUnreadResults();
 
         if (camera1.getPipelineIndex() > 0) {
@@ -162,7 +180,7 @@ public class Vision {
         var results1 = camera1.getAllUnreadResults();
         Optional<EstimatedRobotPose> estPose1 = Optional.empty();
 
-        if (results1.isEmpty()) { //sets data to default values 
+        if (results1.isEmpty()) { // sets data to default values
             target1Visible = false;
             target1Id = 0;
             target1Transform = new Transform3d(
