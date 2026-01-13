@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import static frc.robot.Constants.HardwareConstants.BACK_LEFT_DRIVE_ID;
 import static frc.robot.Constants.HardwareConstants.BACK_LEFT_ENCODER_PORT;
@@ -77,9 +76,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private final CommandXboxController xbox;
     private final boolean fieldOriented;
     private final Vision vision;
-    public boolean foundTag = false;
-    public double measurement = 0;
-    public double rot;
+
+    public double goalRot = 0;
+    public double yaw = 0.0;
+
 
     private final PIDController turnController = new PIDController(2, 0, 0);
     private final PIDController driveController = new PIDController(0.5, 0, 0);
@@ -122,6 +122,17 @@ public class SwerveSubsystem extends SubsystemBase {
         this.xbox = xbox;
         this.fieldOriented = fieldOriented;
         this.vision = vision;
+
+        setDefaultCommand(runOnce(() -> {
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserX.getSelected(),
+                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserY.getSelected(),
+                    -(MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
+                    this.getRotation2d()));
+            this.setDesiredStates(states);
+        }));
     }
 
     /** drive method, built for use with a controller */
@@ -224,7 +235,26 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
-  
+    public Command faceAprilTag(){
+        return runEnd(()-> {
+            if(vision.getYawByTag(10) != 0){
+                yaw = vision.getYawByTag(10);
+                goalRot = yaw - getHeading();
+            } 
+            
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserX.getSelected(),
+                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                            * polarityChooserY.getSelected(),
+                    -(turnController.calculate(goalRot)),
+                    this.getRotation2d()));
+        }, ()->{//reset vars
+            goalRot = 0;
+            yaw = 0;
+        });
+    }
+
     /** Pathplanner configuration - must be called once in Robot Container */
     public void configPathPlanner() {
         try {
@@ -279,15 +309,6 @@ public class SwerveSubsystem extends SubsystemBase {
             } else {
                 speedMultiplier = 2;
             }
-
-            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
-                            * polarityChooserX.getSelected(),
-                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
-                            * polarityChooserY.getSelected(),
-                    -(MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
-                    this.getRotation2d()));
-            this.setDesiredStates(states);
         }
 
         this.poseEstimator.update(
@@ -295,6 +316,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
         SmartDashboard.putNumber("Swerve Pose X", this.getPose().getX());
         SmartDashboard.putNumber("Swerve Pose Y", this.getPose().getY());
+        SmartDashboard.putNumber("Drive rotation goal", goalRot);
 
     }
 }

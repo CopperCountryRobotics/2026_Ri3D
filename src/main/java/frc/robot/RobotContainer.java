@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 
 import static edu.wpi.first.wpilibj.XboxController.Button.*;
@@ -40,9 +41,9 @@ public class RobotContainer {
 		// register named commands here
 
 		// config pathplanner
-		//swerve.configPathPlanner();
+		// swerve.configPathPlanner();
 		// add auto chooser to dashboard
-		//autoChooser = AutoBuilder.buildAutoChooser();
+		// autoChooser = AutoBuilder.buildAutoChooser();
 		autoChooser = new SendableChooser<>();
 		autoChooser.addOption("Left Auto", superstructure.leftAuto());
 		autoChooser.addOption("Right Auto", superstructure.rightAuto());
@@ -54,8 +55,9 @@ public class RobotContainer {
 		// driver xbox
 		// xbox.a().whileTrue(intake.runExtension(0.5));
 		// xbox.b().whileTrue(shooter.setGate(0.5));
-		// xbox.x().whileTrue(shooter.runShooter(0.5));
-		 xbox.y().whileTrue(intake.runConveyor(0.5));
+		xbox.x().whileTrue(swerve.faceAprilTag()
+				.until(() -> swerve.goalRot != 0 && MathUtil.isNear(swerve.goalRot, swerve.yaw, 5)));
+		xbox.y().whileTrue(intake.runConveyor(0.5));
 
 		// operator logitec
 		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
