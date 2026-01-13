@@ -23,6 +23,11 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Constructor */
     public ShooterSubsystem() {
         motor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
+        motor.pid0.setP(0.0001);
+        motor.pid0.setI(0.0001);
+        motor.pid0.setD(0.0);
+        motor.pid0.setAccumulatorCap(0.05);
+
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
     }
@@ -65,7 +70,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command zeroHood(double position) {
         return runOnce(() -> {
             hoodMotor.set(-0.2);
-            Commands.waitSeconds(3);
+            Commands.waitUntil(()->hoodMotor.getSupplyCurrent()>4);
+            hoodMotor.set(0);
             hoodMotor.setEncoderPosition(0);
         });
     }
