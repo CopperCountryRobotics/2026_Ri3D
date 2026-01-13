@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
+import com.thethriftybot.util.Conversion;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,6 +18,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ThriftyNova motor;
     private final ThriftyNova hoodMotor;
     private final ThriftyNova gateMotor;
+    private final DigitalInput hoodSwitch;
 
     private double liveHoodOffset = 0;
 
@@ -37,7 +40,11 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.pid0.setAccumulatorCap(0.05);
         motor.pid0.setAllowableError(0.5);
 
+        hoodSwitch = new DigitalInput(HOOD_SWITCH);
+
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
+
+
     }
 
     /** Command to "set and forget" the shooter motor speed */
@@ -77,10 +84,10 @@ public class ShooterSubsystem extends SubsystemBase {
     /** zeros the position of the hood */
     public Command zeroHood() {
         return runOnce(() -> {
-            hoodMotor.set(-0.2);
-            Commands.waitUntil(() -> hoodMotor.getSupplyCurrent() > 4);
-            hoodMotor.set(0);
-            hoodMotor.setEncoderPosition(0);
+            hoodMotor.set(-0.1 ); // TODO Update to appropriate speed
+            Commands.waitUntil(() -> !hoodSwitch.get());
+            hoodMotor.setEncoderPosition( 1 ); // 1 rotation from the zero point
+            hoodMotor.setPosition(0);
         });
     }
 
