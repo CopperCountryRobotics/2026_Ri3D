@@ -50,9 +50,10 @@ public final class Constants {
     public static final int INTAKE_ID = 13;
     public static final int EXTENSION_MOTOR_ID = 14;
     public static final int CONVEYER_MOTOR_ID = 15;
+    public static final int EXTENSION_MOTOR2_ID = 16;
 
     // Climber CAN ids
-    public static final int CLIMBER_ID = 16;
+    public static final int CLIMBER_ID = 17;
 
     // Current limits
     public static final int INTAKE_CURRENT_LIMIT = 30;
@@ -177,17 +178,17 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final double INTAKE_SPEED = 1;
+    public static final double INTAKE_SPEED = 0.5;
     public static final double CONVEYER_SPEED = 0.7;
-    public static final double EXTEND_IN_SPEED = 0.6;
-    public static final double EXTEND_OUT_SPEED = -0.6;
+    public static final double EXTEND_IN_SPEED = 0.3;
+    public static final double EXTEND_OUT_SPEED = -0.3;
     public static final double EXTEND_OUT_POSITION = 4;
     public static final double EXTEND_IN_POSITION = 0;
   }
 
   public static final class ShooterConstants {
     public static final double DEFAULT_HOOD_POSITION = 0.2;
-    public static final double SHOOTER_SPEED = 1;
+    public static final double SHOOTER_SPEED = 0.75;
     public static final double GATE_SPEED = 0.6;
   }
 }

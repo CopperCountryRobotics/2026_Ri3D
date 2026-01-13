@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -54,21 +55,28 @@ public class RobotContainer {
 
 	public void configBindings() {
 		// driver xbox
+		xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
+		//xbox.a().whileTrue(swerve.strafeToTag());
+		//xbox.b().whileTrue(swerve.faceAprilTag());
+		xbox.y().onTrue(superstructure.stopShoot());
+		xbox.x().onTrue(superstructure.shoot());
 
-		xbox.a().whileTrue(swerve.strafeToTag());
-		xbox.b().whileTrue(swerve.faceAprilTag());
+		xbox.povDown().onTrue(intake.setIntake(0));
+		xbox.povUp().whileTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
+		xbox.povRight().whileTrue(intake.runExtension(0.3));
+		xbox.povLeft().whileTrue(intake.runExtension(-0.3));
 
-		// xbox.b().whileTrue(superstructure.shoot()).onFalse(superstructure.stopShoot());
-		// xbox.x().onTrue(shooter.setHood(5));
+		 xbox.back().onTrue(shooter.setHood(5));
+		 
 		// xbox.y().onTrue(shooter.setHood(4));
 		// xbox.a().onTrue(shooter.setHood(3));
 		// xbox.rightBumper().onTrue(shooter.setHood(0));
 		// xbox.povDown().onTrue(shooter.setHood(5.3));
 		// xbox.povLeft().onTrue(shooter.setHood(7));
 		// xbox.povRight().onTrue(shooter.setHood(5.8));
-		// xbox.povUp().onTrue(shooter.setHood(5.5));
+		xbox.leftBumper().onTrue(shooter.setHood(5.5));
 		// xbox.back().onTrue(shooter.setHood(6));
-		// xbox.start().onTrue(shooter.zeroHood()); // Doesn't even use the variable >:(
+		xbox.start().onTrue(shooter.zeroHood()); // Doesn't even use the variable >:(
 
 		// // operator logitec
 		// new JoystickButton(operatorXbox,

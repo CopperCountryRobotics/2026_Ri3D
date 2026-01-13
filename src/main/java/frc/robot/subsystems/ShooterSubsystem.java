@@ -28,17 +28,17 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Constructor */
     public ShooterSubsystem() {
         motor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
-        motor.pid0.setP(0.0001);
+        motor.pid0.setP(0.7);
         motor.pid0.setI(0.0001);
         motor.pid0.setD(0.0);
         motor.pid0.setAccumulatorCap(0.05);
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
-        motor.pid0.setP(0.0001);
-        motor.pid0.setI(0.0001);
-        motor.pid0.setD(0.0);
-        motor.pid0.setAccumulatorCap(0.05);
-        motor.pid0.setAllowableError(0.5);
+        hoodMotor.pid0.setP(0.0001);
+        hoodMotor.pid0.setI(0.0001);
+        hoodMotor.pid0.setD(0.0);
+        hoodMotor.pid0.setAccumulatorCap(0.05);
+        hoodMotor.pid0.setAllowableError(0.5);
 
         hoodSwitch = new DigitalInput(HOOD_SWITCH);
 
@@ -50,7 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command to "set and forget" the shooter motor speed */
     public Command setShooter(double speed) {
         return runOnce(() -> {
-            motor.setVelocity(speed);
+            motor.setPercent(speed);
             setSpeed = speed;
         });
     }
@@ -58,9 +58,9 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command with end statement to set the motor speed to zero */
     public Command runShooter(double speed) {
         return runEnd(() -> {
-            motor.setVelocity(speed);
+            motor.setPercent(speed);
         }, () -> {
-            motor.setVelocity(0);
+            motor.setPercent(0);
         });
     }
 
@@ -85,8 +85,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command zeroHood() {
         return runOnce(() -> {
             hoodMotor.set(-0.1 ); // TODO Update to appropriate speed
-            Commands.waitUntil(() -> !hoodSwitch.get());
-            hoodMotor.setEncoderPosition( 1 ); // 1 rotation from the zero point
+            Commands.waitUntil(() -> hoodSwitch.get());
+            hoodMotor.setEncoderPosition(0); // 1 rotation from the zero point
             hoodMotor.setPosition(0);
         });
     }
@@ -118,6 +118,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Motor speed", this.motor.getVelocity());
         SmartDashboard.putNumber("Set speed", setSpeed);
         SmartDashboard.putNumber("Hood setpoint", hoodSetpoint);
-        SmartDashboard.putNumber("Hood encoder", hoodMotor.getPosition());
+        SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
     }
 }
+

@@ -13,6 +13,7 @@ import static frc.robot.Constants.HardwareConstants.*;
 public class IntakeSubsystem extends SubsystemBase {
     // motor controllers
     private final ThriftyNova extensionMotor;
+    private final ThriftyNova extensionMotor2;
     private final ThriftyNova intakeMotor;
     private final ThriftyNova conveyorMotor;
 
@@ -20,7 +21,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         intakeMotor = new ThriftyNova(INTAKE_ID);
+        intakeMotor.setInversion(true);
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
+        extensionMotor2 = new ThriftyNova(EXTENSION_MOTOR2_ID);
+        extensionMotor2.setInversion(true);//.follow(EXTENSION_MOTOR_ID);
         conveyorMotor = new ThriftyNova(CONVEYER_MOTOR_ID);
     }
 
@@ -63,24 +67,28 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command runExtension(double output) {
         return runEnd(() -> {
             extensionMotor.set(output);
+            extensionMotor2.set(output);
         }, () -> {
             extensionMotor.set(0);
+            extensionMotor2.set(0);
             extensionMotor.setBrakeMode(true);
+            extensionMotor2.setBrakeMode(true);
         });
     }
 
     public Command extendIn() {
         return runExtension(IntakeConstants.EXTEND_IN_SPEED)
-                .until(() -> extensionMotor.getPosition() >= IntakeConstants.EXTEND_IN_POSITION - 0.2);
+                .withTimeout(1);
     }
 
     public Command extendOut() {
         return runExtension(IntakeConstants.EXTEND_OUT_SPEED)
-                .until(() -> extensionMotor.getPosition() <= IntakeConstants.EXTEND_OUT_POSITION + 0.2);
+                .withTimeout(1);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("intake set speed", setSpeed);
+        SmartDashboard.putNumber("extension position", extensionMotor.getPosition());
     }
 }
