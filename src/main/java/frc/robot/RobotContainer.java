@@ -28,10 +28,10 @@ public class RobotContainer {
 	private final Vision vision = new Vision();
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
-	 private final IntakeSubsystem intake = new IntakeSubsystem();
+	private final IntakeSubsystem intake = new IntakeSubsystem();
 
-	 private final Superstructure superstructure = new Superstructure(swerve,
-	intake, shooter, vision);
+	private final Superstructure superstructure = new Superstructure(swerve,
+			intake, shooter, vision);
 
 	// Sendable chooser for auton (appears on Dashboards)
 	private final SendableChooser<Command> autoChooser;
@@ -54,24 +54,21 @@ public class RobotContainer {
 
 	public void configBindings() {
 		// driver xbox
-		xbox.b().whileTrue(superstructure.shoot()).onFalse(superstructure.stopShoot());
-		xbox.x().onTrue(shooter.setHood(5));
-		xbox.y().onTrue(shooter.setHood(4));
-		xbox.a().onTrue(shooter.setHood(3));
-		xbox.rightBumper().onTrue(shooter.setHood(0));
-		xbox.povDown().onTrue(shooter.setHood(5.3));
-		xbox.povLeft().onTrue(shooter.setHood(7));
-		xbox.povRight().onTrue(shooter.setHood(5.8));
-		xbox.povUp().onTrue(shooter.setHood(5.5));
-		xbox.back().onTrue(shooter.setHood(6));
-		xbox.start().onTrue(shooter.zeroHood(0)); //Doesn't even use the variable >:(
 
+		xbox.a().whileTrue(swerve.strafeToTag());
+		xbox.b().whileTrue(swerve.faceAprilTag());
 
-		// xbox.b().whileTrue(shooter.setGate(0.5));
-		// // xbox.x().whileTrue(swerve.faceAprilTag()
-		// // .until(() -> swerve.goalRot != 0 && MathUtil.isNear(swerve.goalRot,
-		// swerve.yaw, 5)));
-		// // xbox.y().whileTrue(intake.runConveyor(0.5));
+		// xbox.b().whileTrue(superstructure.shoot()).onFalse(superstructure.stopShoot());
+		// xbox.x().onTrue(shooter.setHood(5));
+		// xbox.y().onTrue(shooter.setHood(4));
+		// xbox.a().onTrue(shooter.setHood(3));
+		// xbox.rightBumper().onTrue(shooter.setHood(0));
+		// xbox.povDown().onTrue(shooter.setHood(5.3));
+		// xbox.povLeft().onTrue(shooter.setHood(7));
+		// xbox.povRight().onTrue(shooter.setHood(5.8));
+		// xbox.povUp().onTrue(shooter.setHood(5.5));
+		// xbox.back().onTrue(shooter.setHood(6));
+		// xbox.start().onTrue(shooter.zeroHood()); // Doesn't even use the variable >:(
 
 		// // operator logitec
 		// new JoystickButton(operatorXbox,

@@ -28,7 +28,7 @@ public class SwerveModule implements IDashboardProvider {
         this.drive = new SwerveSpark(driveId, driveReverse, true, DRIVE_GEAR_RATIO);
         this.turn = new SwerveSpark(turnId, turnReverse, false, TURN_GEAR_RATIO);
         this.encoder = new SwerveEncoder(encoderId);
-        this.pid = new PIDController(40.0, 0.1, 0.1);
+        this.pid = new PIDController(5.0, 0, 0.1);
         this.moduleName = moduleName;
 
         this.pid.enableContinuousInput(-0.5, 0.5);

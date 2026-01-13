@@ -79,10 +79,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public double goalRot = 0;
     public double yaw = 0.0;
+    private double speedMultiplier = 0.6;
 
-
-    private final PIDController turnController = new PIDController(2, 0, 0);
-    private final PIDController driveController = new PIDController(0.5, 0, 0);
+    private final PIDController turnController = new PIDController(0.01, 0, 0);
+    private final PIDController driveController = new PIDController(0.01, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -235,13 +235,13 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
-    public Command faceAprilTag(){
-        return runEnd(()-> {
-            if(vision.getYawByTag(10) != 0){
+    public Command faceAprilTag() {
+        return runEnd(() -> {
+            if (vision.getYawByTag(10) != 0) {
                 yaw = vision.getYawByTag(10);
                 goalRot = yaw - getHeading();
-            } 
-            
+            }
+
             SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
                     MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
                             * polarityChooserX.getSelected(),
@@ -249,10 +249,41 @@ public class SwerveSubsystem extends SubsystemBase {
                             * polarityChooserY.getSelected(),
                     -(turnController.calculate(goalRot)),
                     this.getRotation2d()));
-        }, ()->{//reset vars
+        }, () -> {// reset vars
             goalRot = 0;
             yaw = 0;
         });
+    }
+
+    private double x = 0;
+    private double goalX = 2;
+    private double y = 0;
+    private double goalY = 0;
+
+    public Command strafeToTag() {
+        return runEnd(() -> {
+            if (vision.getTagPoseX() != 0) {
+                x = vision.getTagPoseX();
+            }
+
+            if (vision.getTagPoseY() != 0) {
+                y = vision.getTagPoseY();
+            }
+
+            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    driveController.calculate(x - goalX) +
+                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                                    * polarityChooserX.getSelected(),
+                    driveController.calculate(y - goalY) +
+                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                                    * polarityChooserY.getSelected(),
+                    -(turnController.calculate(goalRot)),
+                    this.getRotation2d()));
+        }, () -> {
+            x = 0;
+            y = 0;
+        });
+
     }
 
     /** Pathplanner configuration - must be called once in Robot Container */
@@ -296,18 +327,18 @@ public class SwerveSubsystem extends SubsystemBase {
         });
     }
 
-    private double speedMultiplier = 0.6;
-
     // updates pose and driving
     @Override
     public void periodic() {
         if (DriverStation.isTeleopEnabled()) {
             if (xbox.leftTrigger().getAsBoolean()) {
+                speedMultiplier = 0.4;
+            } 
+            // else if (xbox.rightTrigger().getAsBoolean()) {
+            //     speedMultiplier = 1.4;
+            // }
+             else {
                 speedMultiplier = 1;
-            } else if (xbox.rightTrigger().getAsBoolean()) {
-                speedMultiplier = 3;
-            } else {
-                speedMultiplier = 2;
             }
         }
 

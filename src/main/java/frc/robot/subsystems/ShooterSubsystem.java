@@ -75,7 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /** zeros the position of the hood */
-    public Command zeroHood(double position) {
+    public Command zeroHood() {
         return runOnce(() -> {
             hoodMotor.set(-0.2);
             Commands.waitUntil(() -> hoodMotor.getSupplyCurrent() > 4);
@@ -85,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     //**just adds a live offset to our encoder position */
-    public Command zeroHood2(double position) {
+    public Command zeroHood2() {
         return runOnce(() -> {
             liveHoodOffset = hoodMotor.getPosition();
         });
