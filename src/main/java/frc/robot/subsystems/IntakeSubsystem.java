@@ -11,13 +11,15 @@ import static frc.robot.Constants.HardwareConstants.*;
 public class IntakeSubsystem extends SubsystemBase {
     // motor controllers
     private final ThriftyNova extensionMotor;
-    public final ThriftyNova intakeMotor;
+    private final ThriftyNova intakeMotor;
+    private final ThriftyNova conveyorMotor;
 
     private double setSpeed = 0;
 
     public IntakeSubsystem() {
         intakeMotor = new ThriftyNova(INTAKE_ID);
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
+        conveyorMotor = new ThriftyNova(CONVEYER_MOTOR_ID);
     }
 
     /** run once command to set the intake motor speed */
@@ -36,6 +38,14 @@ public class IntakeSubsystem extends SubsystemBase {
         });
     }
 
+    /** Run end command to run the conveyor motor - upon ending will stop */
+    public Command runConveyor(double speed) {
+        return runEnd(() -> {
+            conveyorMotor.set(speed);
+        }, () -> {
+            conveyorMotor.set(0);
+        });
+    }
 
     /**
      * run end command to run the extension motor - upon ending will stop and enter

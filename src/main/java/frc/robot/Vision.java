@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Vision {
     private PhotonCamera camera = new PhotonCamera("Camera");
 
-    public Vision() {
-
-    }
+    public Vision() {}
 
     public PhotonPipelineResult getLatestResult() {
         return camera.getLatestResult();

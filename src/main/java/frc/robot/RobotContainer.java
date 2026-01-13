@@ -55,7 +55,7 @@ public class RobotContainer {
 		// xbox.a().whileTrue(intake.runExtension(0.5));
 		// xbox.b().whileTrue(shooter.setGate(0.5));
 		// xbox.x().whileTrue(shooter.runShooter(0.5));
-		// xbox.y().whileTrue(shooter.testHoodMotor(0.5));
+		 xbox.y().whileTrue(intake.runConveyor(0.5));
 
 		// operator logitec
 		new JoystickButton(operatorXbox, kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
@@ -75,10 +75,9 @@ public class RobotContainer {
 	}
 
 	public void updates() {
-		SmartDashboard.putNumber("Cam Skew", vision.getSkew());
 		SmartDashboard.putNumber("Cam Pitch", vision.getPitch());
 		SmartDashboard.putNumber("Cam Yaw", vision.getYaw());
-		SmartDashboard.putNumber("Cam Best Tag", vision.getBestTagID());
-		vision.updateReadings();
+		SmartDashboard.putNumber("Cam Yaw", vision.getFiducialId());
+
 	}
 }

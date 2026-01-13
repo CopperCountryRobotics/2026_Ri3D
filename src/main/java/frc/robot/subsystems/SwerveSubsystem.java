@@ -224,45 +224,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
     }
 
-    public Command searchForTag(int tagID) {
-        foundTag = false;
-        return run(() -> {
-            if (vision.getBestTagID() == tagID) {
-                measurement = vision.getYaw() + getHeading() % 360;
-            }
-        });
-    }
-
-    /** Uses a PID controller to face tag id 1 */
-    public Command faceAprilTag() {
-        return runOnce(() -> {
-            Commands.run((() -> {
-                if (vision.getBestTagID() == 2) {
-                    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(
-                            fieldOriented
-                                    ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected()
-                                                    + driveController.calculate(vision.getYaw()),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw()),
-                                            this.getRotation2d())
-                                    : new ChassisSpeeds(
-                                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * 9
-                                                    * polarityChooserX.getSelected(),
-                                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * 9
-                                                    * polarityChooserY.getSelected()
-                                                    + driveController.calculate(vision.getYaw()),
-                                            MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * 9
-                                                    + turnController.calculate(vision.getYaw())));
-                    this.setDesiredStates(states);
-                }
-            }), this).until(() -> MathUtil.isNear(0, vision.getYaw(), 5));
-        });
-    }
-
+  
     /** Pathplanner configuration - must be called once in Robot Container */
     public void configPathPlanner() {
         try {
@@ -289,19 +251,6 @@ public class SwerveSubsystem extends SubsystemBase {
     public void putDashboard() {
         SmartDashboard.putNumber("GyroAngle", this.getHeading());
         SmartDashboard.putString("PoseEstimator", this.poseEstimator.getEstimatedPosition().toString());
-    }
-
-    public double getRot() {
-        if (xbox.a().getAsBoolean()) {
-            if (vision.getBestTagID() == 2) {
-                var rotGoal = vision.getYaw() - getHeading();
-                return MathUtil.applyDeadband(turnController.calculate(rotGoal, getHeading()), 2);
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
     }
 
     public Command autoDrive(double x, double y, double rot) {
@@ -336,7 +285,7 @@ public class SwerveSubsystem extends SubsystemBase {
                             * polarityChooserX.getSelected(),
                     MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
                             * polarityChooserY.getSelected(),
-                    -(getRot() + MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
+                    -(MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
                     this.getRotation2d()));
             this.setDesiredStates(states);
         }
@@ -344,7 +293,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.poseEstimator.update(
                 this.getRotation2d(), this.getSwervePosition());
         this.swervePose.accept(this.poseEstimator.getEstimatedPosition());
-        SmartDashboard.putNumber("Calculated rot", getRot());
         SmartDashboard.putNumber("Swerve Pose X", this.getPose().getX());
         SmartDashboard.putNumber("Swerve Pose Y", this.getPose().getY());
 

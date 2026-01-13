@@ -43,14 +43,15 @@ public final class Constants {
     // Shooter CAN ids
     public static final int HOOD_MOTOR_ID = 10;
     public static final int SHOOTER_ID = 11;
+    public static final int GATE_MOTOR_ID = 12;
 
     // Intake CAN ids
-    public static final int GATE_MOTOR_ID = 12;
     public static final int INTAKE_ID = 13;
     public static final int EXTENSION_MOTOR_ID = 14;
+    public static final int CONVEYER_MOTOR_ID = 15;
 
     // Climber CAN ids
-    public static final int CLIMBER_ID = 15;
+    public static final int CLIMBER_ID = 16;
 
     // Current limits
     public static final int INTAKE_CURRENT_LIMIT = 30;
