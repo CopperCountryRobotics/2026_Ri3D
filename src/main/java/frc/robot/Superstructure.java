@@ -46,7 +46,7 @@ public class Superstructure {
     public Command shoot() {
         return sequence(
                 shooter.setShooter(ShooterConstants.SHOOTER_SPEED),
-                waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.05),
+                waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03),
                 shooter.setGate(ShooterConstants.GATE_SPEED),
                 intake.setConveyor(IntakeConstants.CONVEYER_SPEED));
     }
@@ -55,6 +55,13 @@ public class Superstructure {
         return sequence(
                 shooter.setShooter(0),
                 shooter.setGate(0),
+                intake.setConveyor(0));
+    }
+
+    public Command reverseShooter() {
+        return sequence(
+                shooter.setShooter(-0.4),
+                shooter.setGate(-0.4),
                 intake.setConveyor(0));
     }
 

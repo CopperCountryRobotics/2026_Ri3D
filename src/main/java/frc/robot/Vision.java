@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Vision {
     private PhotonCamera camera = new PhotonCamera("Camera");
 
-    public Vision() {}
+    public Vision() {
+    }
 
     public PhotonPipelineResult getLatestResult() {
         return camera.getLatestResult();
@@ -38,6 +39,30 @@ public class Vision {
     public double getFiducialId() {
         try {
             return camera.getLatestResult().getBestTarget().getFiducialId();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    public double getTagPoseX() {
+        try {
+            return camera.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    public double getTagPoseY() {
+        try {
+            return camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    public double getTagPoseZ() {
+        try {
+            return camera.getLatestResult().getBestTarget().getBestCameraToTarget().getZ();
         } catch (Exception ex) {
             return 0;
         }
@@ -85,6 +110,9 @@ public class Vision {
 
     public void updateDashboard() {
         SmartDashboard.putNumber("yaw", getYaw());
+        SmartDashboard.putNumber("tag pose x", getTagPoseX());
+        SmartDashboard.putNumber("tag pose y", getTagPoseY());
+        SmartDashboard.putNumber("tag pose z", getTagPoseZ());
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putNumber("fiducial id", getFiducialId());
     }
