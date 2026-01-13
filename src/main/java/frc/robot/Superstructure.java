@@ -4,6 +4,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -12,14 +13,16 @@ public class Superstructure {
     private final IntakeSubsystem intake;
     private final ShooterSubsystem shooter;
     private final Vision vision;
+    private final LEDSubsystem leds;
 
     /** Constructor */
     public Superstructure(SwerveSubsystem swerve, IntakeSubsystem intake,
-            ShooterSubsystem shooter, Vision vision) {
+            ShooterSubsystem shooter, Vision vision, LEDSubsystem leds) {
         this.swerve = swerve;
         this.intake = intake;
         this.shooter = shooter;
         this.vision = vision;
+        this.leds = leds;
     }
 
     /**
