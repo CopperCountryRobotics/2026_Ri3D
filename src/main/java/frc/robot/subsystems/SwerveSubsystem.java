@@ -27,6 +27,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -81,8 +82,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public double yaw = 0.0;
     private double speedMultiplier = 0.6;
 
-    private final PIDController turnController = new PIDController(0.01, 0, 0);
-    private final PIDController driveController = new PIDController(0.01, 0, 0);
+    private final PIDController turnController = new PIDController(0.1, 0, 0);
+    private final PIDController driveController = new PIDController(0.7, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -242,13 +243,26 @@ public class SwerveSubsystem extends SubsystemBase {
                 goalRot = yaw - getHeading();
             }
 
-            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
-                            * polarityChooserX.getSelected(),
-                    MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
-                            * polarityChooserY.getSelected(),
-                    -(turnController.calculate(goalRot)),
-                    this.getRotation2d()));
+            if (Math.abs(goalRot - yaw) >= 0.2) {
+                SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                                * polarityChooserX.getSelected(),
+                        MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                                * polarityChooserY.getSelected(),
+                        -(turnController.calculate(goalRot)),
+                        this.getRotation2d()));
+                this.setDesiredStates(states);
+            } else {
+                SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                                * polarityChooserX.getSelected(),
+                        MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                                * polarityChooserY.getSelected(),
+                        -(turnController.calculate(goalRot)),
+                        this.getRotation2d()));
+                this.setDesiredStates(states);
+            }
+
         }, () -> {// reset vars
             goalRot = 0;
             yaw = 0;
@@ -256,7 +270,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     private double x = 0;
-    private double goalX = 2;
+    private double goalX = 3.5;
     private double y = 0;
     private double goalY = 0;
 
@@ -264,21 +278,37 @@ public class SwerveSubsystem extends SubsystemBase {
         return runEnd(() -> {
             if (vision.getTagPoseX() != 0) {
                 x = vision.getTagPoseX();
+                System.out.println("This is x:" + x);
             }
 
             if (vision.getTagPoseY() != 0) {
                 y = vision.getTagPoseY();
+                System.out.println("This is y:" + y);
             }
+            if ((Math.abs(x - goalX)) >= 0.2 | Math.abs(y - goalY) >= 0.2) {
+                SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        driveController.calculate(x - goalX) +
+                                MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
+                                        * polarityChooserX.getSelected(),
+                        driveController.calculate(y - goalY) +
+                                MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
+                                        * polarityChooserY.getSelected(),
+                        0,
+                        this.getRotation2d()));
+                this.setDesiredStates(states);
+            } else {
+                SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        0, 0, 0,
+                        this.getRotation2d()));
+                this.setDesiredStates(states);
+                runOnce(() -> {
+                    xbox.setRumble(RumbleType.kBothRumble, 1);
+                }).withTimeout(1.0);
+                runOnce(() -> {
+                    xbox.setRumble(RumbleType.kBothRumble, 0);
+                });
 
-            SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    driveController.calculate(x - goalX) +
-                            MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
-                                    * polarityChooserX.getSelected(),
-                    driveController.calculate(y - goalY) +
-                            MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
-                                    * polarityChooserY.getSelected(),
-                    -(turnController.calculate(goalRot)),
-                    this.getRotation2d()));
+            }
         }, () -> {
             x = 0;
             y = 0;
@@ -332,13 +362,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         if (DriverStation.isTeleopEnabled()) {
             if (xbox.leftTrigger().getAsBoolean()) {
-                speedMultiplier = 0.4;
-            } 
-            // else if (xbox.rightTrigger().getAsBoolean()) {
-            //     speedMultiplier = 1.4;
-            // }
-             else {
-                speedMultiplier = 1;
+                speedMultiplier = 0.6;
+            }
+            else if (xbox.rightTrigger().getAsBoolean()) {
+            speedMultiplier = 2.5;
+            }
+            else {
+                speedMultiplier = 2;
             }
         }
 
@@ -348,6 +378,5 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Swerve Pose X", this.getPose().getX());
         SmartDashboard.putNumber("Swerve Pose Y", this.getPose().getY());
         SmartDashboard.putNumber("Drive rotation goal", goalRot);
-
     }
 }

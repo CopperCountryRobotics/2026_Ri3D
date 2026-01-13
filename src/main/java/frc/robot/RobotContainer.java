@@ -90,9 +90,6 @@ public class RobotContainer {
 	}
 
 	public void updates() {
-		SmartDashboard.putNumber("Cam Pitch", vision.getPitch());
-		SmartDashboard.putNumber("Cam Yaw", vision.getYaw());
-		SmartDashboard.putNumber("Cam Yaw", vision.getFiducialId());
-
+		vision.updateDashboard();
 	}
 }
