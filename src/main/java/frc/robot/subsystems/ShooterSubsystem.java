@@ -17,6 +17,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ThriftyNova hoodMotor;
     private final ThriftyNova gateMotor;
 
+    private double liveHoodOffset = 0;
+
     private double setSpeed = 0;
     private double hoodSetpoint = 0;
 
@@ -29,6 +31,12 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.pid0.setAccumulatorCap(0.05);
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
+        motor.pid0.setP(0.0001);
+        motor.pid0.setI(0.0001);
+        motor.pid0.setD(0.0);
+        motor.pid0.setAccumulatorCap(0.05);
+        motor.pid0.setAllowableError(0.5);
+
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
     }
 
@@ -70,16 +78,23 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command zeroHood(double position) {
         return runOnce(() -> {
             hoodMotor.set(-0.2);
-            Commands.waitUntil(()->hoodMotor.getSupplyCurrent()>4);
+            Commands.waitUntil(() -> hoodMotor.getSupplyCurrent() > 4);
             hoodMotor.set(0);
             hoodMotor.setEncoderPosition(0);
+        });
+    }
+
+    //**just adds a live offset to our encoder position */
+    public Command zeroHood2(double position) {
+        return runOnce(() -> {
+            liveHoodOffset = hoodMotor.getPosition();
         });
     }
 
     /** Updates the position of the hood */
     public Command setHood(double position) {
         return runOnce(() -> {
-            hoodMotor.setPosition(position);
+            hoodMotor.setPosition(position - liveHoodOffset);
         });
     }
 
