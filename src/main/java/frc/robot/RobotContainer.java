@@ -64,6 +64,7 @@ public class RobotContainer {
 		xbox.povRight().onTrue(shooter.setHood(5.8));
 		xbox.povUp().onTrue(shooter.setHood(5.5));
 		xbox.back().onTrue(shooter.setHood(6));
+		xbox.start().onTrue(shooter.zeroHood(0)); //Doesn't even use the variable >:(
 
 
 		// xbox.b().whileTrue(shooter.setGate(0.5));
