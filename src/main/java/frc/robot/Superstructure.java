@@ -2,8 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import static edu.wpi.first.wpilibj2.command.Commands.*;
-
+import static edu.wpi.first.wpilibj2.command.Commands.sequence;
+import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -47,8 +47,9 @@ public class Superstructure {
         return sequence(
                 // swerve.strafeToTag(),
                 shooter.setShooter(ShooterConstants.SHOOTER_SPEED),
-                race(waitSeconds(0.5),
-                        waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03)),
+                waitSeconds(2),
+                // race(waitSeconds(0.5),
+                //         waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03)),
                 shooter.setGate(ShooterConstants.GATE_SPEED),
                 intake.setConveyor(IntakeConstants.CONVEYER_SPEED));
     }

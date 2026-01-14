@@ -1,24 +1,14 @@
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
-
-import static edu.wpi.first.wpilibj.XboxController.Button.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import static frc.robot.Constants.IntakeConstants.*;
-import static frc.robot.Constants.ShooterConstants.*;
-
-import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer {
 	// Joysticks
@@ -43,7 +33,7 @@ public class RobotContainer {
 		// register named commands here
 
 		// config pathplanner
-		// swerve.configPathPlanner();
+		// swerve.configPathPlanner();]\[]
 		// add auto chooser to dashboard
 		// autoChooser = AutoBuilder.buildAutoChooser();
 		autoChooser = new SendableChooser<>();
@@ -56,27 +46,30 @@ public class RobotContainer {
 	public void configBindings() {
 		// driver xbox
 		xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
-		//xbox.a().whileTrue(swerve.strafeToTag());
-		//xbox.b().whileTrue(swerve.faceAprilTag());
+		xbox.start().whileTrue(swerve.strafeToTag());
+		xbox.b().whileTrue(swerve.faceAprilTag());
 		xbox.y().onTrue(superstructure.stopShoot());
 		xbox.x().onTrue(superstructure.shoot());
 
 		xbox.povDown().onTrue(intake.setIntake(0));
-		xbox.povUp().whileTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
+		xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
 		xbox.povRight().whileTrue(intake.runExtension(0.3));
 		xbox.povLeft().whileTrue(intake.runExtension(-0.3));
 
-		 xbox.back().onTrue(shooter.setHood(5));
+		xbox.leftBumper().whileTrue(shooter.runHood(0.07));
+		xbox.rightBumper().whileTrue(shooter.runHood(-0.07));
+		//  xbox.back().onTrue(shooter.setHood(5));
+		xbox.back().onTrue(swerve.resetGyro());
 		 
-		// xbox.y().onTrue(shooter.setHood(4));
-		// xbox.a().onTrue(shooter.setHood(3));
-		// xbox.rightBumper().onTrue(shooter.setHood(0));
-		// xbox.povDown().onTrue(shooter.setHood(5.3));
-		// xbox.povLeft().onTrue(shooter.setHood(7));
-		// xbox.povRight().onTrue(shooter.setHood(5.8));
-		xbox.leftBumper().onTrue(shooter.setHood(5.5));
-		// xbox.back().onTrue(shooter.setHood(6));
-		xbox.start().onTrue(shooter.zeroHood()); // Doesn't even use the variable >:(
+		// // xbox.y().onTrue(shooter.setHood(4));
+		// // xbox.a().onTrue(shooter.setHood(3));
+		// // xbox.rightBumper().onTrue(shooter.setHood(0));
+		// // xbox.povDown().onTrue(shooter.setHood(5.3));
+		// // xbox.povLeft().onTrue(shooter.setHood(7));
+		// // xbox.povRight().onTrue(shooter.setHood(5.8));
+		// xbox.leftBumper().onTrue(shooter.setHood(5.5));
+		// // xbox.back().onTrue(shooter.setHood(6));
+		// xbox.start().onTrue(shooter.zeroHood()); // Doesn't even use the variable >:(
 
 		// // operator logitec
 		// new JoystickButton(operatorXbox,

@@ -48,8 +48,6 @@ import static frc.robot.Constants.HardwareConstants.GYRO_ID;
 import static frc.robot.Constants.SwerveConstants.DEAD_BAND;
 import static frc.robot.Constants.SwerveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
-
-import frc.robot.Superstructure;
 import frc.robot.Vision;
 import frc.robot.lib.subsystems.SubsystemBase;
 
@@ -85,7 +83,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private double speedMultiplier = 0.6;
 
     private final PIDController turnController = new PIDController(0.1, 0, 0);
-    private final PIDController driveController = new PIDController(0.7, 0, 0);
+    private final PIDController driveController = new PIDController(1.4, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
             .getStructTopic("AdvantageScope/SwervePose", Pose2d.struct).publish();
@@ -367,7 +365,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 speedMultiplier = 0.6;
             }
             else if (xbox.rightTrigger().getAsBoolean()) {
-            speedMultiplier = 2.5;
+            speedMultiplier = 4;
             }
             else {
                 speedMultiplier = 2;

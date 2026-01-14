@@ -2,17 +2,16 @@ package frc.robot.subsystems;
 
 import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
-import com.thethriftybot.util.Conversion;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static frc.robot.Constants.HardwareConstants.*;
+import static frc.robot.Constants.HardwareConstants.GATE_MOTOR_ID;
+import static frc.robot.Constants.HardwareConstants.HOOD_MOTOR_ID;
+import static frc.robot.Constants.HardwareConstants.HOOD_SWITCH;
+import static frc.robot.Constants.HardwareConstants.SHOOTER_ID;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final ThriftyNova motor;
@@ -102,6 +101,14 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command setHood(double position) {
         return runOnce(() -> {
             hoodMotor.setPosition(position - liveHoodOffset);
+        });
+    }
+
+    public Command runHood(double speed){
+        return runEnd(()->{
+            hoodMotor.set(speed);
+        }, ()->{
+            hoodMotor.set(0);
         });
     }
 
