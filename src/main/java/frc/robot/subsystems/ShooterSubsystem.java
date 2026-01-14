@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.thethriftybot.devices.ThriftyNova;
+import com.thethriftybot.devices.ThriftyNova.CurrentType;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
 import com.thethriftybot.util.Conversion;
 
@@ -31,6 +32,14 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.pid0.setP(0.7);
         motor.pid0.setI(0.0001);
         motor.pid0.setD(0.0);
+        motor.pid0.setFF(8.0); // Is probably a little under the nominal amount. TODO
+
+        /*
+            The feed forward in this case is used to set the "nominal" speed of the shooter
+            fly wheel. I set this to about 2/3 motor speed so the PID will probably need to 
+            pull this back up. 
+        */
+
         motor.pid0.setAccumulatorCap(0.05);
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
@@ -38,7 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodMotor.pid0.setI(0.0001);
         hoodMotor.pid0.setD(0.0);
         hoodMotor.pid0.setAccumulatorCap(0.05);
-        hoodMotor.pid0.setAllowableError(0.5);
+        hoodMotor.pid0.setAllowableError(0.1);
 
         hoodSwitch = new DigitalInput(HOOD_SWITCH);
 
@@ -50,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command to "set and forget" the shooter motor speed */
     public Command setShooter(double speed) {
         return runOnce(() -> {
-            motor.setPercent(speed);
+            motor.setVelocity(speed);
             setSpeed = speed;
         });
     }
@@ -84,9 +93,10 @@ public class ShooterSubsystem extends SubsystemBase {
     /** zeros the position of the hood */
     public Command zeroHood() {
         return runOnce(() -> {
+            hoodMotor.setMaxCurrent( CurrentType.SUPPLY, 2); // Super low current limit to protect pulley
             hoodMotor.set(-0.1 ); // TODO Update to appropriate speed
             Commands.waitUntil(() -> hoodSwitch.get());
-            hoodMotor.setEncoderPosition(0); // 1 rotation from the zero point
+            hoodMotor.setEncoderPosition(0);
             hoodMotor.setPosition(0);
         });
     }
