@@ -31,13 +31,16 @@ public class ShooterSubsystem extends SubsystemBase {
         motor.pid0.setP(0.7);
         motor.pid0.setI(0.0001);
         motor.pid0.setD(0.0);
-        motor.pid0.setFF(8.0); // Is probably a little under the nominal amount. TODO
+        motor.pid0.setFF(.0005); 
+        //6 is absurdly high. .0005 allowed for us to be too fast at 400 ticks/s and under at 4000 ticks/s
 
         /*
-            The feed forward in this case is used to set the "nominal" speed of the shooter
-            fly wheel. I set this to about 2/3 motor speed so the PID will probably need to 
-            pull this back up. 
-        */
+         * The feed forward in this case is used to set the "nominal" speed of the
+         * shooter
+         * fly wheel. I set this to about 2/3 motor speed so the PID will probably need
+         * to
+         * pull this back up.
+         */
 
         motor.pid0.setAccumulatorCap(0.05);
 
@@ -45,13 +48,13 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodMotor.pid0.setP(0.0001);
         hoodMotor.pid0.setI(0.0001);
         hoodMotor.pid0.setD(0.0);
+        hoodMotor.pid0.setFF(0.0001);
         hoodMotor.pid0.setAccumulatorCap(0.05);
         hoodMotor.pid0.setAllowableError(0.1);
 
         hoodSwitch = new DigitalInput(HOOD_SWITCH);
 
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
-
 
     }
 
@@ -92,15 +95,15 @@ public class ShooterSubsystem extends SubsystemBase {
     /** zeros the position of the hood */
     public Command zeroHood() {
         return runOnce(() -> {
-            hoodMotor.setMaxCurrent( CurrentType.SUPPLY, 2); // Super low current limit to protect pulley
-            hoodMotor.set(-0.1 ); // TODO Update to appropriate speed
+            hoodMotor.setMaxCurrent(CurrentType.SUPPLY, 2); // Super low current limit to protect pulley
+            hoodMotor.set(-0.1); // TODO Update to appropriate speed
             Commands.waitUntil(() -> hoodSwitch.get());
             hoodMotor.setEncoderPosition(0);
             hoodMotor.setPosition(0);
         });
     }
 
-    //**just adds a live offset to our encoder position */
+    // **just adds a live offset to our encoder position */
     public Command zeroHood2() {
         return runOnce(() -> {
             liveHoodOffset = hoodMotor.getPosition();
@@ -114,10 +117,10 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    public Command runHood(double speed){
-        return runEnd(()->{
+    public Command runHood(double speed) {
+        return runEnd(() -> {
             hoodMotor.set(speed);
-        }, ()->{
+        }, () -> {
             hoodMotor.set(0);
         });
     }
@@ -128,6 +131,7 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
+
     @Override
     public void periodic() {
 
@@ -135,7 +139,10 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Motor speed", this.motor.getVelocity());
         SmartDashboard.putNumber("Set speed", setSpeed);
         SmartDashboard.putNumber("Hood setpoint", hoodSetpoint);
-        SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
+        SmartDashboard.putNumber("Hood encoder internal", hoodMotor.getPositionInternal());//returns int values
+        SmartDashboard.putNumber("Hood encoder pos", hoodMotor.getPosition());//returns int values
+        SmartDashboard.putNumber("Hood encoder abs pos", hoodMotor.getPositionAbs());//returns nothing
+        SmartDashboard.putNumber("Hood encoder pos quad", hoodMotor.getPositionQuad());//returns nothing
+
     }
 }
-
