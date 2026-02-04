@@ -3,11 +3,9 @@ package frc.robot;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonVersion;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
@@ -115,6 +113,7 @@ public class Vision {
         SmartDashboard.putNumber("tag pose z", getTagPoseZ());
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putNumber("fiducial id", getFiducialId());
-
+        SmartDashboard.putNumber("Tag 10 pitch", getPitchByTag(10));
+        SmartDashboard.putNumber("Tag 10 yaw", getYawByTag(10));
     }
 }

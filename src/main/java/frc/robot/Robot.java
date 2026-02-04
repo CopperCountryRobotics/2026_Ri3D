@@ -51,8 +51,6 @@ public class Robot extends TimedRobot {
 		if (this.autonomousCommand != null) {
 			this.autonomousCommand.cancel();
 		}
-		robotContainer.setup();
-
 	}
 
 	@Override
