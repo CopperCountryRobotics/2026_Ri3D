@@ -11,7 +11,7 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
-    private PhotonCamera camera = new PhotonCamera("Camera");
+    private PhotonCamera camera = new PhotonCamera("PC_Camera");
 
     public Vision() {
     }
@@ -115,5 +115,6 @@ public class Vision {
         SmartDashboard.putNumber("tag pose z", getTagPoseZ());
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putNumber("fiducial id", getFiducialId());
+
     }
 }

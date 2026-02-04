@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.thethriftybot.devices.ThriftyNova;
+import com.thethriftybot.devices.ThriftyNova.EncoderType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +19,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private final ThriftyNova intakeMotor;
     private final ThriftyNova conveyorMotor;
 
+    private final PIDController controller = new PIDController(0.8, 0, 0);
+    private double extSetpoint = 0;
+
     private double setSpeed = 0;
 
     public IntakeSubsystem() {
@@ -24,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.setInversion(true);
         extensionMotor = new ThriftyNova(EXTENSION_MOTOR_ID);
         extensionMotor2 = new ThriftyNova(EXTENSION_MOTOR2_ID);
-        extensionMotor2.setInversion(true);//.follow(EXTENSION_MOTOR_ID);
+        extensionMotor2.setInversion(false).follow(EXTENSION_MOTOR_ID);
         conveyorMotor = new ThriftyNova(CONVEYER_MOTOR_ID);
     }
 
@@ -67,12 +72,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command runExtension(double output) {
         return runEnd(() -> {
             extensionMotor.set(output);
-            extensionMotor2.set(output);
+            //extensionMotor2.set(output);
         }, () -> {
             extensionMotor.set(0);
-            extensionMotor2.set(0);
-            extensionMotor.setBrakeMode(true);
-            extensionMotor2.setBrakeMode(true);
+            //extensionMotor2.set(0);
+            //extensionMotor.setBrakeMode(true);
+           // extensionMotor2.setBrakeMode(true);
         });
     }
 
@@ -86,9 +91,25 @@ public class IntakeSubsystem extends SubsystemBase {
                 .withTimeout(1);
     }
 
+    /** Updates the position of the extenstion */
+    public Command setExt(double position) {
+        return runOnce(() -> {
+            extSetpoint = position;
+        });
+    }
+
+    private double getExtEffort() {
+        return controller.calculate(extensionMotor.getPositionInternal(), extSetpoint);
+    }
+
     @Override
     public void periodic() {
+        // TODO add
+        //extensionMotor.setVoltage(getExtEffort());
+        //extensionMotor2.setVoltage(getExtEffort());
+        SmartDashboard.putNumber("Extension setpoint", extSetpoint);
+        SmartDashboard.putNumber("Extension calculated effort", getExtEffort());
         SmartDashboard.putNumber("intake set speed", setSpeed);
-        SmartDashboard.putNumber("extension position", extensionMotor.getPosition());
+        SmartDashboard.putNumber("extension position", extensionMotor.getPositionInternal());
     }
 }

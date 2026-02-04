@@ -41,7 +41,7 @@ public final class Constants {
     public static final int GYRO_ID = 9;
 
     // Shooter CAN ids
-    public static final int HOOD_MOTOR_ID = 10;
+    public static final int HOOD_MOTOR_ID = 20;
     public static final int SHOOTER_ID = 11;
     public static final int GATE_MOTOR_ID = 12;
     public static final int HOOD_SWITCH = 6; // DIO INPUT 6

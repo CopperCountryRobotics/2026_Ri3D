@@ -327,8 +327,8 @@ public class SwerveSubsystem extends SubsystemBase {
                     () -> getSpeeds(),
                     (speeds, feedforwards) -> drive(speeds),
                     new PPHolonomicDriveController(
-                            new PIDConstants(10, 0, 0), // drive
-                            new PIDConstants(10, 0, 0)), // Rotation
+                            new PIDConstants(0.15, 0, 0), // drive
+                            new PIDConstants(7, 0, 0)), // Rotation
                     config,
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                     this);

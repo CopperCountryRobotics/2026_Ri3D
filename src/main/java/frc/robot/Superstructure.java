@@ -39,8 +39,12 @@ public class Superstructure {
         return (distance / Math.cos(theta)) * Math.sqrt(9.8 / (2 * (distance * Math.tan(theta) - height)));
     }
 
-    public Command setupExtension(double time) {
-        return intake.runExtension(0.7).withTimeout(time);
+    public Command setupExtension(double timeOut, double timeIn) {
+        return sequence(
+            intake.runExtension(0.3).withTimeout(0.6),
+            waitSeconds(2),
+            intake.runExtension(0.2).withTimeout(0.08)
+        );
     }
 
     public Command shoot() {
@@ -77,19 +81,19 @@ public class Superstructure {
                 intake.setIntake(IntakeConstants.INTAKE_SPEED));
     }
 
-    // autons because pathplanner doesnt work
-    public Command leftAuto() {// TODO fix
-        return sequence(
-                swerve.autoDrive(0.5, 1, 0).withTimeout(1.5),
-                swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
-                swerve.autoDrive(0, 0, 0));
-    }
+    // // autons because pathplanner doesnt work
+    // public Command leftAuto() {// TODO fix
+    //     return sequence(
+    //             swerve.autoDrive(0.5, 1, 0).withTimeout(1.5),
+    //             swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
+    //             swerve.autoDrive(0, 0, 0));
+    // }
 
-    // autons because pathplanner doesnt work
-    public Command rightAuto() {// TODO fix
-        return sequence(
-                swerve.autoDrive(-0.5, 1, 0).withTimeout(1.5),
-                swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
-                swerve.autoDrive(0, 0, 0));
-    }
+    // // autons because pathplanner doesnt work
+    // public Command rightAuto() {// TODO fix
+    //     return sequence(
+    //             swerve.autoDrive(-0.5, 1, 0).withTimeout(1.5),
+    //             swerve.autoDrive(0, 0, 0.5).withTimeout(0.8),
+    //             swerve.autoDrive(0, 0, 0));
+    // }
 }
