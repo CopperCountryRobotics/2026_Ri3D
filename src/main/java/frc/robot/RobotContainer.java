@@ -47,11 +47,17 @@ public class RobotContainer {
 
 	public void configBindings() {//TODO clean up and rewrite
 		// driver xbox
-		xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
-		xbox.start().whileTrue(swerve.strafeToTag());
-		xbox.b().whileTrue(swerve.faceAprilTag());
-		xbox.y().onTrue(superstructure.stopShoot());
-		xbox.x().onTrue(superstructure.shoot());
+		// xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
+		// xbox.start().whileTrue(swerve.strafeToTag());
+		// xbox.b().whileTrue(swerve.faceAprilTag());
+		// xbox.y().onTrue(superstructure.stopShoot());
+		// xbox.x().onTrue(superstructure.shoot());
+
+		xbox.a().onTrue(shooter.setHood(0));
+		xbox.b().onTrue(shooter.setHood(2));
+		xbox.y().onTrue(shooter.setHood(5));
+		xbox.x().onTrue(shooter.setHood(20));
+
 
 		xbox.povDown().onTrue(intake.setIntake(0));
 		xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));

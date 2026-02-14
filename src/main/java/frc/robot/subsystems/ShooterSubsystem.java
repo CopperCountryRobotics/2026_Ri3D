@@ -4,6 +4,7 @@ import com.thethriftybot.devices.ThriftyNova;
 import com.thethriftybot.devices.ThriftyNova.CurrentType;
 import com.thethriftybot.devices.ThriftyNova.EncoderType;
 import com.thethriftybot.devices.ThriftyNova.MotorType;
+import com.thethriftybot.devices.ThriftyNova.PIDSlot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,14 +36,17 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotor.pid0.setAccumulatorCap(0.05);
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
+
         hoodMotor.useEncoderType(EncoderType.INTERNAL);
         hoodMotor.setEncoderPosition(0);
-        hoodMotor.pid0.setP(0.0);// 004);//TODO add back
-        hoodMotor.pid0.setI(0.0000);
-        hoodMotor.pid0.setD(0.0);
-        hoodMotor.pid0.setFF(0.0);// 0.7);//TODO addback
-        hoodMotor.pid0.setAccumulatorCap(0.00005);
-        hoodMotor.pid0.setAllowableError(0.1);
+        hoodMotor.pid1.setP(0.4);// TODO add back
+        hoodMotor.pid1.setI(0.0000);
+        hoodMotor.pid1.setD(0.0);
+        hoodMotor.pid1.setFF(0.07);// TODO addback
+        hoodMotor.pid1.setAccumulatorCap(0.00005);
+        hoodMotor.pid1.setAllowableError(0.001);
+
+        hoodMotor.usePIDSlot(PIDSlot.SLOT1);
 
         hoodSwitch = new DigitalInput(HOOD_SWITCH);
 
@@ -127,8 +131,8 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Motor speed", this.shooterMotor.getVelocity());
         SmartDashboard.putNumber("Set speed", setSpeed);
         SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
-        SmartDashboard.putNumber("Hood encoder rotations?", hoodMotor.getPositionInternal()/(4096/25));
-        SmartDashboard.putNumber("Hood set point", hoodMotor.getSetPoint());
+        SmartDashboard.putNumber("Hood encoder rotations?", hoodMotor.getPositionInternal() / (4096 / 25));
+        SmartDashboard.putNumber("Hood set point (ticks?)", hoodMotor.getSetPoint());
 
     }
 }
