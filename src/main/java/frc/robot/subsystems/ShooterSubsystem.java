@@ -37,6 +37,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
 
+        hoodMotor.setRampUp(0.0125);
+        hoodMotor.setRampDown(0.02);
+
         hoodMotor.useEncoderType(EncoderType.INTERNAL);
         hoodMotor.setEncoderPosition(0);
         hoodMotor.pid1.setP(0.3);// TODO add back
@@ -90,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** zeros the position of the hood */
     public Command zeroHood() {
         return runOnce(() -> {
-            hoodMotor.setMaxCurrent(CurrentType.SUPPLY, 2); // Super low current limit to protect pulley
+            hoodMotor.setMaxCurrent(CurrentType.SUPPLY, 20); // Super low current limit to protect pulley
             hoodMotor.set(-0.1); // TODO Update to appropriate speed
             Commands.waitUntil(() -> hoodSwitch.get());
             hoodMotor.setEncoderPosition(0);
