@@ -39,12 +39,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor.useEncoderType(EncoderType.INTERNAL);
         hoodMotor.setEncoderPosition(0);
-        hoodMotor.pid1.setP(0.4);// TODO add back
+        hoodMotor.pid1.setP(0.3);// TODO add back
         hoodMotor.pid1.setI(0.0000);
         hoodMotor.pid1.setD(0.0);
         hoodMotor.pid1.setFF(0.07);// TODO addback
         hoodMotor.pid1.setAccumulatorCap(0.00005);
-        hoodMotor.pid1.setAllowableError(0.001);
+        hoodMotor.pid1.setAllowableError(0.00001);
 
         hoodMotor.usePIDSlot(PIDSlot.SLOT1);
 
