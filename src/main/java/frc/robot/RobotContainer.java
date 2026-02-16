@@ -34,7 +34,7 @@ public class RobotContainer {
 		configBindings();
 
 		// register named commands here
-
+		shooter.setDefaultCommand(shooter.holdShooter(0));
 		// config pathplanner
 		swerve.configPathPlanner();
 		// add auto chooser to dashboard
@@ -48,13 +48,14 @@ public class RobotContainer {
 		// xbox.start().whileTrue(swerve.strafeToTag());
 		// xbox.b().whileTrue(swerve.faceAprilTag());
 		// xbox.y().onTrue(superstructure.stopShoot());
-		// xbox.x().onTrue(superstructure.shoot());
+		//xbox.x().onTrue(superstructure.shoot());
+		xbox.x().whileTrue(shooter.runShooter(0.4));//holdShooter(ShooterConstants.SHOOTER_SPEED));
 
 		xbox.a().onTrue(shooter.setHood(0));
 		xbox.b().onTrue(shooter.setHood(9));
 
-		xbox.y().onTrue(shooter.setHood(1));
-		xbox.x().onTrue(shooter.setHood(.5));
+		xbox.y().onTrue(shooter.setHood(12));
+		//xbox.x().onTrue(shooter.setHood(5));
 
 
 		xbox.povDown().onTrue(intake.setIntake(0));

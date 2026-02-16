@@ -28,24 +28,27 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Constructor */
     public ShooterSubsystem() {
+        
         shooterMotor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
+        shooterMotor.useEncoderType(EncoderType.INTERNAL);
         shooterMotor.pid0.setP(0.7);
         shooterMotor.pid0.setI(0.0001);
         shooterMotor.pid0.setD(0.0);
         shooterMotor.pid0.setFF(8.0); // Is probably a little under the nominal amount
         shooterMotor.pid0.setAccumulatorCap(0.05);
+        shooterMotor.usePIDSlot(PIDSlot.SLOT0);
 
         hoodMotor = new ThriftyNova(HOOD_MOTOR_ID, MotorType.NEO);
 
-        hoodMotor.setRampUp(0.0125);
-        hoodMotor.setRampDown(0.02);
+        //hoodMotor.setRampUp(0.0125);
+        //hoodMotor.setRampDown(0.02);
 
         hoodMotor.useEncoderType(EncoderType.INTERNAL);
         hoodMotor.setEncoderPosition(0);
         hoodMotor.pid1.setP(0.3);// TODO add back
         hoodMotor.pid1.setI(0.0000);
-        hoodMotor.pid1.setD(0.0);
-        hoodMotor.pid1.setFF(0.07);// TODO addback
+        hoodMotor.pid1.setD(0.03);
+        hoodMotor.pid1.setFF(0.007);// TODO addback
         hoodMotor.pid1.setAccumulatorCap(0.00005);
         hoodMotor.pid1.setAllowableError(0.00001);
 
@@ -59,6 +62,12 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command to "set and forget" the shooter motor speed */
     public Command setShooter(double speed) {
         return runOnce(() -> {
+            shooterMotor.setVelocity(speed);
+            setSpeed = speed;
+        });
+    }
+    public Command holdShooter(double speed) {
+        return run(() -> {
             shooterMotor.setVelocity(speed);
             setSpeed = speed;
         });
@@ -136,6 +145,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
         SmartDashboard.putNumber("Hood encoder rotations?", hoodMotor.getPositionInternal() / (4096 / 25));
         SmartDashboard.putNumber("Hood set point (ticks?)", hoodMotor.getSetPoint());
+        SmartDashboard.putNumber("Offset?", liveHoodOffset);
 
     }
 }
