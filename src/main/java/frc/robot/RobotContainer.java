@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -21,7 +20,7 @@ public class RobotContainer {
 	// Subsystems/custom class instantiation
 	private final Vision vision = new Vision();
 	private final SwerveSubsystem swerve = new SwerveSubsystem(xbox, true, vision);
-	private final ShooterSubsystem shooter = new ShooterSubsystem();
+	private final ShooterSubsystem shooter = new ShooterSubsystem(vision, xbox);
 	private final IntakeSubsystem intake = new IntakeSubsystem();
 
 	private final Superstructure superstructure = new Superstructure(swerve,
@@ -52,8 +51,8 @@ public class RobotContainer {
 		xbox.x().onTrue(superstructure.shoot());
 		//xbox.x().whileTrue(shooter.runShooter(0.4));//holdShooter(ShooterConstants.SHOOTER_SPEED));
 
-		xbox.a().onTrue(shooter.setHood(0));
-		xbox.b().onTrue(shooter.setHood(2));
+		xbox.a().onTrue(shooter.bumpHoodDown());
+		xbox.b().onTrue(shooter.bumpHoodUp());
 
 		// xbox.y().onTrue(shooter.setHood(3));
 		// xbox.x().onTrue(shooter.setHood(4));
@@ -65,7 +64,7 @@ public class RobotContainer {
 		// xbox.povRight().whileTrue(intake.extendOut());
 		// xbox.povLeft().whileTrue(intake.extendIn());
 
-		xbox.leftBumper().onTrue(shooter.zeroHood());
+		xbox.leftBumper().whileTrue(shooter.zeroHood()).onFalse(shooter.resetEncoder());
 		xbox.rightBumper().onTrue(shooter.setHood(3));
 
 		xbox.back().onTrue(swerve.resetGyro());

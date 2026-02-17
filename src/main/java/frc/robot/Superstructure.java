@@ -50,7 +50,7 @@ public class Superstructure {
         return sequence(
                 // swerve.strafeToTag(),
                 shooter.setGate(0),
-                shooter.setShooter(30),
+                shooter.setShooter(160),
                 //waitSeconds(2),
                 race(waitSeconds(0.5),
                         waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03)),
@@ -67,16 +67,17 @@ public class Superstructure {
 
     public Command reverseShooter() {
         return sequence(
-                shooter.setShooter(-0.7),
-                shooter.setGate(-0.7),
+                shooter.setShooter(-0.8),
+                shooter.setGate(-0.8),
                 intake.setConveyor(-0.2));
     }
 
     public Command intake() {
         return sequence(
-                shooter.setShooter(0.1), 
+                shooter.setShooter(0.3), 
                 shooter.setGate(0),
                 intake.setConveyor(0), // TODO consider a low speed
                 intake.setIntake(IntakeConstants.INTAKE_SPEED));
     }
+
 }
