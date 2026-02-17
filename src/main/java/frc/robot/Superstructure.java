@@ -50,7 +50,7 @@ public class Superstructure {
         return sequence(
                 // swerve.strafeToTag(),
                 shooter.setGate(0),
-                shooter.setShooter(ShooterConstants.SHOOTER_SPEED),
+                shooter.setShooter(30),
                 //waitSeconds(2),
                 race(waitSeconds(0.5),
                         waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03)),

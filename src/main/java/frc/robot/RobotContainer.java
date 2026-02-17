@@ -34,7 +34,7 @@ public class RobotContainer {
 		configBindings();
 
 		// register named commands here
-		shooter.setDefaultCommand(shooter.holdShooter(0));
+		//shooter.setDefaultCommand(shooter.holdShooter(0));
 		// config pathplanner
 		swerve.configPathPlanner();
 		// add auto chooser to dashboard
@@ -43,25 +43,27 @@ public class RobotContainer {
 	}
 
 	public void configBindings() {//TODO clean up and rewrite
+		//*****GOOD BINDINGS, ADD BACK IN */
 		// driver xbox
 		// xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
 		// xbox.start().whileTrue(swerve.strafeToTag());
 		// xbox.b().whileTrue(swerve.faceAprilTag());
-		// xbox.y().onTrue(superstructure.stopShoot());
-		//xbox.x().onTrue(superstructure.shoot());
-		xbox.x().whileTrue(shooter.runShooter(0.4));//holdShooter(ShooterConstants.SHOOTER_SPEED));
+		xbox.y().onTrue(superstructure.stopShoot());
+		xbox.x().onTrue(superstructure.shoot());
+		//xbox.x().whileTrue(shooter.runShooter(0.4));//holdShooter(ShooterConstants.SHOOTER_SPEED));
 
 		xbox.a().onTrue(shooter.setHood(0));
-		xbox.b().onTrue(shooter.setHood(9));
+		xbox.b().onTrue(shooter.setHood(2));
 
-		xbox.y().onTrue(shooter.setHood(12));
-		//xbox.x().onTrue(shooter.setHood(5));
+		// xbox.y().onTrue(shooter.setHood(3));
+		// xbox.x().onTrue(shooter.setHood(4));
 
 
-		xbox.povDown().onTrue(intake.setIntake(0));
-		xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
-		xbox.povRight().whileTrue(intake.extendOut());
-		xbox.povLeft().whileTrue(intake.extendIn());
+		/***GOOD BINDINGS, ADD BACK IN */
+		// xbox.povDown().onTrue(intake.setIntake(0));
+		// xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
+		// xbox.povRight().whileTrue(intake.extendOut());
+		// xbox.povLeft().whileTrue(intake.extendIn());
 
 		xbox.leftBumper().onTrue(shooter.zeroHood());
 		xbox.rightBumper().onTrue(shooter.setHood(3));

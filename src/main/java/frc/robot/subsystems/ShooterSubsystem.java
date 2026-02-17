@@ -31,10 +31,10 @@ public class ShooterSubsystem extends SubsystemBase {
         
         shooterMotor = new ThriftyNova(SHOOTER_ID, MotorType.NEO);
         shooterMotor.useEncoderType(EncoderType.INTERNAL);
-        shooterMotor.pid0.setP(0.7);
-        shooterMotor.pid0.setI(0.0001);
+        shooterMotor.pid0.setP(0);
+        shooterMotor.pid0.setI(0.000);
         shooterMotor.pid0.setD(0.0);
-        shooterMotor.pid0.setFF(8.0); // Is probably a little under the nominal amount
+        shooterMotor.pid0.setFF(0.007); // Is probably a little under the nominal amount
         shooterMotor.pid0.setAccumulatorCap(0.05);
         shooterMotor.usePIDSlot(PIDSlot.SLOT0);
 
@@ -59,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
     }
 
-    /** Command to "set and forget" the shooter motor speed */
+    /** Command to "set and forget" the shooter motor speed, in rev/sec */
     public Command setShooter(double speed) {
         return runOnce(() -> {
             shooterMotor.setVelocity(speed);
@@ -76,9 +76,9 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Command with end statement to set the motor speed to zero */
     public Command runShooter(double speed) {
         return runEnd(() -> {
-            shooterMotor.setPercent(speed);
+            shooterMotor.set(speed);
         }, () -> {
-            shooterMotor.setPercent(0);
+            shooterMotor.set(0);
         });
     }
 

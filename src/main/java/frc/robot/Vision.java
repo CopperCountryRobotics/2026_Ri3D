@@ -25,6 +25,14 @@ public class Vision {
             return 0;
         }
     }
+        
+    public double getSkew() {
+        try {
+            return camera.getLatestResult().getBestTarget().getSkew();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
 
     public double getPitch() {
         try {
@@ -107,6 +115,7 @@ public class Vision {
     }
 
     public void updateDashboard() {
+        SmartDashboard.putNumber("Yaw", getSkew());
         SmartDashboard.putNumber("yaw", getYaw());
         SmartDashboard.putNumber("tag pose x", getTagPoseX());
         SmartDashboard.putNumber("tag pose y", getTagPoseY());
