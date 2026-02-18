@@ -4,8 +4,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import static frc.robot.Constants.SwerveConstants.MAX_DRIVE_VOLTAGE;
-import static frc.robot.Constants.SwerveConstants.MAX_TURN_VOLTAGE;
+import static frc.robot.Constants.SwerveConstants.MAX_DRIVE_VOLTAGE_DNU;
+import static frc.robot.Constants.SwerveConstants.MAX_TURN_VOLTAGE_DNU;
 import static frc.robot.Constants.SwerveConstants.WHEEL_RADIUS;
 
 public class SwerveSpark extends SparkMax {
@@ -19,7 +19,7 @@ public class SwerveSpark extends SparkMax {
                 .inverted(reverse)
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(isDrive ? 80 : 20)
-                .voltageCompensation(isDrive ? MAX_DRIVE_VOLTAGE : MAX_TURN_VOLTAGE);
+                .voltageCompensation(isDrive ? MAX_DRIVE_VOLTAGE_DNU : MAX_TURN_VOLTAGE_DNU);
         // .closedLoopRampRate(0.1);
         this.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         this.GEAR_RATIO = gearRatio;
