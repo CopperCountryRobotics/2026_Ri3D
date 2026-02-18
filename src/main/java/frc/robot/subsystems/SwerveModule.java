@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Constants.SwerveConstants.DRIVE_GEAR_RATIO;
 import static frc.robot.Constants.SwerveConstants.MAX_DRIVE_VOLTAGE;
+import static frc.robot.Constants.SwerveConstants.MAX_DRIVE_VOLTAGE_DNU;
 import static frc.robot.Constants.SwerveConstants.MAX_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_TURN_VOLTAGE;
+import static frc.robot.Constants.SwerveConstants.MAX_TURN_VOLTAGE_DNU;
 import static frc.robot.Constants.SwerveConstants.TURN_GEAR_RATIO;
 import frc.robot.lib.encoder.SwerveEncoder;
 import frc.robot.lib.helpers.IDashboardProvider;

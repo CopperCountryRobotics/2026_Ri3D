@@ -161,8 +161,11 @@ public final class Constants {
     public static final double WHEEL_RADIUS = Units.inchesToMeters(4 / 2.0);
     public static final double DRIVE_GEAR_RATIO = 300.0 / 79.0;
     public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
-    public static final int MAX_DRIVE_VOLTAGE = 6;
-    public static final int MAX_TURN_VOLTAGE = 6;
+    public static final int MAX_DRIVE_VOLTAGE_DNU = 12; //DO NOT USE THIS IS A SPARK MOTORCONTROLLER VARIABLE
+    public static final int MAX_TURN_VOLTAGE_DNU = 8; //DO NOT USE, THIS IS A SPARK MOTORCONTROLLER VARIABLE
+    public static final int MAX_DRIVE_VOLTAGE = 12;
+    public static final int MAX_TURN_VOLTAGE = 12;
+    
 
     public static final double MAX_SPEED = Units.feetToMeters(15.1);
     public static final double MAX_ACCELERATION = 10.0;
