@@ -13,11 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Vision;
 
-import static edu.wpi.first.wpilibj2.command.Commands.waitSeconds;
 import static frc.robot.Constants.HardwareConstants.GATE_MOTOR_ID;
 import static frc.robot.Constants.HardwareConstants.HOOD_MOTOR_ID;
 import static frc.robot.Constants.HardwareConstants.HOOD_SWITCH;
@@ -27,7 +25,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private final ThriftyNova shooterMotor;
     private final ThriftyNova hoodMotor;
     private final ThriftyNova gateMotor;
-    private final DigitalInput hoodSwitch;
 
     private Vision vision;
     private CommandXboxController xbox;
@@ -73,8 +70,6 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodMotor.pid1.setAllowableError(0.00001);
 
         hoodMotor.usePIDSlot(PIDSlot.SLOT1);
-
-        hoodSwitch = new DigitalInput(HOOD_SWITCH);
 
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
 

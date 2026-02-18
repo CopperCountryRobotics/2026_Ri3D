@@ -311,7 +311,7 @@ public class SwerveSubsystem extends SubsystemBase {
             }
         }, () -> {
             x = 0;
-            y = 0; 
+            y = 0;
         });
 
     }
@@ -363,11 +363,9 @@ public class SwerveSubsystem extends SubsystemBase {
         if (DriverStation.isTeleopEnabled()) {
             if (xbox.leftTrigger().getAsBoolean()) {
                 speedMultiplier = 0.6;
-            }
-            else if (xbox.rightTrigger().getAsBoolean()) {
-            speedMultiplier = 4;
-            }
-            else {
+            } else if (xbox.rightTrigger().getAsBoolean()) {
+                speedMultiplier = 4;
+            } else {
                 speedMultiplier = 2;
             }
         }

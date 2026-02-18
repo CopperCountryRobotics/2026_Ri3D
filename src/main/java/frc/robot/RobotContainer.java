@@ -33,7 +33,6 @@ public class RobotContainer {
 		configBindings();
 
 		// register named commands here
-		//shooter.setDefaultCommand(shooter.holdShooter(0));
 		// config pathplanner
 		swerve.configPathPlanner();
 		// add auto chooser to dashboard
