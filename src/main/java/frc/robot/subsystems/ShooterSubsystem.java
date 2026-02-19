@@ -29,7 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private Vision vision;
     private CommandXboxController xbox;
     private double hoodSetpoint;
-    private double setPos;//for lerp filling testing
+    private double setPos;// for lerp filling testing
     private final InterpolatingDoubleTreeMap lerpTable = new InterpolatingDoubleTreeMap();
 
     private double liveHoodOffset = 0;
@@ -51,7 +51,6 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotor.usePIDSlot(PIDSlot.SLOT0);
         shooterMotor.setMaxCurrent(CurrentType.SUPPLY, 40);
         shooterMotor.setMaxCurrent(CurrentType.STATOR, 40);
-
 
         setPos = shooterMotor.getSetPoint();
 
@@ -78,12 +77,13 @@ public class ShooterSubsystem extends SubsystemBase {
         autoAdjustChooser.addOption("driver operated", false);
         SmartDashboard.putData(autoAdjustChooser);
 
-
-
         // Lerp table config
-        lerpTable.put(0.0, 0.0);// TODO add more
+        lerpTable.put(4.07, 3.6);// TODO add more
+        lerpTable.put(3.8, 4.1);
+        lerpTable.put(3.57, 4.5);
 
         this.xbox = xbox;
+        this.vision = vision;
     }
 
     /** Command to "set and forget" the shooter motor speed, in rev/sec */
@@ -110,7 +110,6 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-
     /** returns the shooter motors speed in revolutions per second */
     public double getShooterSpeed() {
         return shooterMotor.getVelocity();
@@ -128,20 +127,19 @@ public class ShooterSubsystem extends SubsystemBase {
         return hoodMotor.getPosition() * 360;
     }
 
-    public Command zeroHood(){
-        return runEnd(()->{
+    public Command zeroHood() {
+        return runEnd(() -> {
             hoodMotor.setVoltage(-0.7);
-        }, ()->{
+        }, () -> {
             hoodMotor.set(0);
-            //hoodMotor.setEncoderPosition(0);
+            // hoodMotor.setEncoderPosition(0);
         });
     }
 
-    public Command resetEncoder(){
-        return runOnce(()->{
+    public Command resetEncoder() {
+        return runOnce(() -> {
             Commands.sequence(
-                Commands.waitSeconds(3)
-            );
+                    Commands.waitSeconds(3));
             hoodMotor.setEncoderPosition(0);
         });
     }
@@ -154,17 +152,17 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    public Command bumpHoodUp(){
+    public Command bumpHoodUp() {
         return runOnce(() -> {
-            hoodMotor.setPosition(setPos+0.1);
-            setPos = setPos+0.1;
+            hoodMotor.setPosition(setPos + 0.1);
+            setPos = setPos + 0.1;
         });
     }
 
-    public Command bumpHoodDown(){
+    public Command bumpHoodDown() {
         return runOnce(() -> {
-            hoodMotor.setPosition(setPos-0.1);
-            setPos=setPos-0.1;
+            hoodMotor.setPosition(setPos - 0.1);
+            setPos = setPos - 0.1;
         });
     }
 
@@ -180,35 +178,35 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
-    public Command setHoodSpeed(double speed){
-        return runOnce(()->{
+    public Command setHoodSpeed(double speed) {
+        return runOnce(() -> {
             hoodMotor.set(speed);
         });
     }
 
     @Override
     public void periodic() {
-        //TODO implement after filling lerp
-        // if(autoAdjustChooser.getSelected()){
-        //     if(vision.getSkew()!=0){
-        //         hoodSetpoint = lerpTable.get(vision.getSkew());
-        //     }
-        //     hoodMotor.setPosition(hoodSetpoint);
-        // } else {
-        //     if(xbox.rightBumper().getAsBoolean()){
-        //         setHoodSpeed(0.4);
-        //     } else if (xbox.leftBumper().getAsBoolean()){
-        //         setHoodSpeed(-0.4);
-        //     } else {
-        //         setHoodSpeed(0);
-        //     }
-        // }
+        // TODO implement after filling lerp
+        if (autoAdjustChooser.getSelected()) {
+            if (vision.getTagPoseX() != 0) {
+                hoodSetpoint = lerpTable.get(vision.getTagPoseX());
+            }
+            hoodMotor.setPosition(hoodSetpoint);
+        } else {
+            if (xbox.rightBumper().getAsBoolean()) {
+                setHoodSpeed(0.4);
+            } else if (xbox.leftBumper().getAsBoolean()) {
+                setHoodSpeed(-0.4);
+            } else {
+                setHoodSpeed(0);
+            }
+        }
         // update dashboard
         SmartDashboard.putNumber("Shooter speed", this.shooterMotor.getVelocity());
         SmartDashboard.putNumber("Shooter set speed", setSpeed);
         SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
         SmartDashboard.putNumber("Hood encoder rotations?", hoodMotor.getPositionInternal() / (4096 / 25));
-        SmartDashboard.putNumber("Hood Goal Pos", setPos);//for lerp filling testing
+        SmartDashboard.putNumber("Hood Goal Pos", setPos);// for lerp filling testing
 
     }
 }
