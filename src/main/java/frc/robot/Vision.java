@@ -9,7 +9,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
-    private PhotonCamera camera = new PhotonCamera("PC_Camera");
+    private PhotonCamera camera = new PhotonCamera("Camera");
 
     public Vision() {
     }

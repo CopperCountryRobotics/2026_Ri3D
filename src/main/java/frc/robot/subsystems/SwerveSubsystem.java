@@ -130,10 +130,12 @@ public class SwerveSubsystem extends SubsystemBase {
                             * polarityChooserX.getSelected(),
                     MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
                             * polarityChooserY.getSelected(),
-                    -(MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier),
+                    -(MathUtil.applyDeadband(xbox.getRightX(), DEAD_BAND) * speedMultiplier -0.07),
                     this.getRotation2d()));
             this.setDesiredStates(states);
         }));
+
+        gyro.reset();
     }
 
     /** drive method, built for use with a controller */
@@ -364,7 +366,7 @@ public class SwerveSubsystem extends SubsystemBase {
             if (xbox.leftTrigger().getAsBoolean()) {
                 speedMultiplier = 0.6;
             } else if (xbox.rightTrigger().getAsBoolean()) {
-                speedMultiplier = 4;
+                speedMultiplier = 3.5;
             } else {
                 speedMultiplier = 2;
             }

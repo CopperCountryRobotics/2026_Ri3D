@@ -47,13 +47,15 @@ public class Superstructure {
     }
 
     public Command shoot() {
+        var shootSpeed = 67;
+
         return sequence(
                 // swerve.strafeToTag(),
                 shooter.setGate(0),
-                shooter.setShooter(160),
+                shooter.setShooter(shootSpeed),
                 //waitSeconds(2),
-                race(waitSeconds(0.5),
-                        waitUntil(() -> shooter.getShooterSpeed() >= ShooterConstants.SHOOTER_SPEED - 0.03)),
+               // race(waitSeconds(0.5),
+                        waitUntil(() -> shooter.getShooterSpeed() >= shootSpeed),
                 shooter.setGate(ShooterConstants.GATE_SPEED),
                 intake.setConveyor(IntakeConstants.CONVEYER_SPEED));
     }
@@ -80,4 +82,12 @@ public class Superstructure {
                 intake.setIntake(IntakeConstants.INTAKE_SPEED));
     }
 
+
+    public Command autoSetupExtension1(){
+        return intake.runExtension(0.3).withTimeout(0.6);
+    }
+        
+    public Command autoSetupExtension2(){
+        return intake.runExtension(0.2).withTimeout(0.08);
+    }
 }

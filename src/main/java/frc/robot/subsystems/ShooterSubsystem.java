@@ -46,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterMotor.pid0.setP(0);
         shooterMotor.pid0.setI(0.000);
         shooterMotor.pid0.setD(0.0);
-        shooterMotor.pid0.setFF(0.007); // Is probably a little under the nominal amount
+        shooterMotor.pid0.setFF(0.012); // Is probably a little under the nominal amount
         shooterMotor.pid0.setAccumulatorCap(0.05);
         shooterMotor.usePIDSlot(PIDSlot.SLOT0);
         shooterMotor.setMaxCurrent(CurrentType.SUPPLY, 40);
