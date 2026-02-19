@@ -69,6 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodMotor.pid1.setAllowableError(0.00001);
 
         hoodMotor.usePIDSlot(PIDSlot.SLOT1);
+        hoodMotor.setPosition(0);
 
         gateMotor = new ThriftyNova(GATE_MOTOR_ID, MotorType.NEO);
 
@@ -187,20 +188,20 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO implement after filling lerp
-        if (autoAdjustChooser.getSelected()) {
-            if (vision.getTagPoseX() != 0) {
-                hoodSetpoint = lerpTable.get(vision.getTagPoseX());
-            }
-            hoodMotor.setPosition(hoodSetpoint);
-        } else {
-            if (xbox.rightBumper().getAsBoolean()) {
-                setHoodSpeed(0.4);
-            } else if (xbox.leftBumper().getAsBoolean()) {
-                setHoodSpeed(-0.4);
-            } else {
-                setHoodSpeed(0);
-            }
-        }
+        // if (autoAdjustChooser.getSelected()) {
+        //     if (vision.getTagPoseX() != 0) {
+        //         hoodSetpoint = lerpTable.get(vision.getTagPoseX());
+        //     }
+        //     hoodMotor.setPosition(hoodSetpoint);
+        // } else {
+        //     if (xbox.rightBumper().getAsBoolean()) {
+        //         setHoodSpeed(0.4);
+        //     } else if (xbox.leftBumper().getAsBoolean()) {
+        //         setHoodSpeed(-0.4);
+        //     } else {
+        //         setHoodSpeed(0);
+        //     }
+        // }
         // update dashboard
         SmartDashboard.putNumber("Shooter speed", this.shooterMotor.getVelocity());
         SmartDashboard.putNumber("Shooter set speed", setSpeed);
