@@ -72,8 +72,8 @@ public class RobotContainer {
 		//JOYSTICK BINDINGS
 		joystick.button(1).whileTrue(shooter.zeroHood()).onFalse(shooter.resetEncoder());
 		joystick.button(2).onTrue(swerve.resetGyro());
-		joystick.button(3).onTrue(shooter.toggleAutoAdjust());
-
+		joystick.button(3).onTrue(swerve.toggleAutoTurning());
+		joystick.button(5).onTrue(shooter.toggleAutoAdjust());
 
 		joystick.button(7).onTrue(superstructure.setupExtension(3,0));
 	}
