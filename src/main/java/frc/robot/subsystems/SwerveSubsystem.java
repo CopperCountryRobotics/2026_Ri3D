@@ -82,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public double yaw = 0.0;
     private double speedMultiplier = 0.6;
 
-    private final PIDController turnController = new PIDController(0.1, 0, 0);
+    private final PIDController turnController = new PIDController(0.3, 0, 0);
     private final PIDController driveController = new PIDController(1.4, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
@@ -240,18 +240,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Command faceAprilTag() {
         return runEnd(() -> {
-            if (vision.getYawByTag(10) != 0) {
-                yaw = vision.getYawByTag(10);
-                goalRot = yaw - getHeading();
-            }
+                yaw = vision.getShooterYaw();            
 
-            if (Math.abs(goalRot - yaw) >= 0.2) {
+            if (Math.abs(yaw) >= 0.2) {
                 SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
                         MathUtil.applyDeadband(xbox.getLeftY(), DEAD_BAND) * speedMultiplier
                                 * polarityChooserX.getSelected(),
                         MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
                                 * polarityChooserY.getSelected(),
-                        -(turnController.calculate(goalRot)),
+                        (turnController.calculate(yaw, 0)),
                         this.getRotation2d()));
                 this.setDesiredStates(states);
             } else {
@@ -260,7 +257,8 @@ public class SwerveSubsystem extends SubsystemBase {
                                 * polarityChooserX.getSelected(),
                         MathUtil.applyDeadband(xbox.getLeftX(), DEAD_BAND) * speedMultiplier
                                 * polarityChooserY.getSelected(),
-                        -(turnController.calculate(goalRot)),
+                                0,
+                       // -(turnController.calculate(goalRot)),
                         this.getRotation2d()));
                 this.setDesiredStates(states);
             }

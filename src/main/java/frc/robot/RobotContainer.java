@@ -47,44 +47,31 @@ public class RobotContainer {
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 	}
 
-	public void configBindings() {//TODO clean up and rewrite
-		//*****GOOD BINDINGS, ADD BACK IN */
+	public void configBindings() {
 		// driver xbox
-		// xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
-		// xbox.start().whileTrue(swerve.strafeToTag());
-		// xbox.b().whileTrue(swerve.faceAprilTag());
+		xbox.a().whileTrue(superstructure.reverseShooter()).onFalse(superstructure.stopShoot());
+		xbox.start().whileTrue(swerve.strafeToTag());
+		xbox.b().whileTrue(swerve.faceAprilTag());
 		xbox.y().onTrue(superstructure.stopShoot());
 		xbox.x().onTrue(superstructure.shoot());
-		//xbox.x().whileTrue(shooter.runShooter(0.4));//holdShooter(ShooterConstants.SHOOTER_SPEED));
 
-		xbox.a().onTrue(shooter.bumpHoodDown());
-		xbox.b().onTrue(shooter.bumpHoodUp());
-
-		// xbox.y().onTrue(shooter.setHood(3));
-		// xbox.x().onTrue(shooter.setHood(4));
+		// xbox.a().onTrue(shooter.bumpHoodDown());
+		// xbox.b().onTrue(shooter.bumpHoodUp());
 
 
-		/***GOOD BINDINGS, ADD BACK IN */
 		xbox.povDown().onTrue(intake.setIntake(0));
 		xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
 		xbox.povRight().whileTrue(intake.extendOut());
 		xbox.povLeft().whileTrue(intake.extendIn());
 
-		xbox.leftBumper().whileTrue(shooter.zeroHood()).onFalse(shooter.resetEncoder());
 		xbox.rightBumper().onTrue(shooter.setHood(3));
 
 		xbox.back().onTrue(swerve.resetGyro());
 
-		// // // operator logitec
-		// new JoystickButton(operatorXbox,
-		// kA.value).onTrue(intake.setIntake(INTAKE_SPEED));
-		// // new JoystickButton(operatorXbox,
-		// // kB.value).onTrue(shooter.setHood(DEFAULT_HOOD_POSITION));
 
-		joystick.button(3).onTrue(shooter.setHood(0));
-		joystick.button(4).onTrue(shooter.setHood(0.5));
-		joystick.button(5).onTrue(shooter.setHood(1));
-		joystick.button(6).onTrue(shooter.setHood(1.5));
+		//JOYSTICK BINDINGS
+		joystick.button(1).whileTrue(shooter.zeroHood()).onFalse(shooter.resetEncoder());
+
 		joystick.button(7).onTrue(superstructure.setupExtension(3,0));
 	}
 

@@ -55,6 +55,7 @@ public class Superstructure {
                 shooter.setShooter(shootSpeed),
                 //waitSeconds(2),
                // race(waitSeconds(0.5),
+               waitSeconds(0.02),
                         waitUntil(() -> shooter.getShooterSpeed() >= shootSpeed),
                 shooter.setGate(ShooterConstants.GATE_SPEED),
                 intake.setConveyor(IntakeConstants.CONVEYER_SPEED));

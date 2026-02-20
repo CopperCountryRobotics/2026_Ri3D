@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.lang.annotation.Target;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
@@ -10,6 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
     private PhotonCamera camera = new PhotonCamera("Camera");
+
+    public double latestShooterPos = 0;
+    public boolean seesShooter = false;
+    public double latestShooterYaw = 0;
 
     public Vision() {
     }
@@ -25,7 +30,7 @@ public class Vision {
             return 0;
         }
     }
-        
+
     public double getSkew() {
         try {
             return camera.getLatestResult().getBestTarget().getSkew();
@@ -58,6 +63,42 @@ public class Vision {
         }
     }
 
+    public double getShooterPose() {
+        double shooterPose = 0;
+        try {
+            if (camera.getLatestResult().hasTargets()) {
+
+                for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
+                    if (target.getFiducialId() == 10 | target.getFiducialId() == 26) {
+                        shooterPose = target.getBestCameraToTarget().getX();
+                        break;
+                    }
+                }
+            }
+            return shooterPose;
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    public double getShooterYaw(){
+        double shooterYaw = 0;
+        try {
+            if (camera.getLatestResult().hasTargets()) {
+
+                for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
+                    if (target.getFiducialId() == 10 | target.getFiducialId() == 26) {
+                        shooterYaw = target.getYaw();
+                        break;
+                    }
+                }
+            }
+            return shooterYaw;
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
     public double getTagPoseY() {
         try {
             return camera.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
@@ -74,55 +115,25 @@ public class Vision {
         }
     }
 
-    public double getYawByTag(int tagId) {
-        try {
-            boolean targetFound = false;
-            var yaw = 0.0;
-            List<PhotonTrackedTarget> targets = camera.getLatestResult().getTargets();
-            for (int i = 0; i > targets.size() - 1; i++) {
-                if (targetFound) {
-                    break;
-                } else {
-                    if (targets.get(i).getFiducialId() == tagId) {
-                        yaw = targets.get(i).getYaw();
-                    }
-                }
-            }
-            return yaw;
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
 
-    public double getPitchByTag(int tagId) {
-        try {
-            boolean targetFound = false;
-            var yaw = 0.0;
-            List<PhotonTrackedTarget> targets = camera.getLatestResult().getTargets();
-            for (int i = 0; i > targets.size() - 1; i++) {
-                if (targetFound) {
-                    break;
-                } else {
-                    if (targets.get(i).getFiducialId() == tagId) {
-                        yaw = targets.get(i).getPitch();
-                    }
-                }
-            }
-            return yaw;
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
 
     public void updateDashboard() {
-        SmartDashboard.putNumber("Yaw", getSkew());
+        if(getShooterPose() == 0){
+            seesShooter = false;
+        } else {
+            seesShooter = true;
+            latestShooterPos = getShooterPose();
+            latestShooterYaw = getShooterYaw();
+        }
+
         SmartDashboard.putNumber("yaw", getYaw());
         SmartDashboard.putNumber("tag pose x", getTagPoseX());
         SmartDashboard.putNumber("tag pose y", getTagPoseY());
-        SmartDashboard.putNumber("tag pose z", getTagPoseZ());
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putNumber("fiducial id", getFiducialId());
-        SmartDashboard.putNumber("Tag 10 pitch", getPitchByTag(10));
-        SmartDashboard.putNumber("Tag 10 yaw", getYawByTag(10));
+        SmartDashboard.putNumber("Vision Shooter Pose", getShooterPose());
+        SmartDashboard.putNumber("Vision Shooter Yaw", getShooterYaw());
+
+
     }
 }

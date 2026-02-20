@@ -82,6 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
         lerpTable.put(4.07, 3.6);// TODO add more
         lerpTable.put(3.8, 4.1);
         lerpTable.put(3.57, 4.5);
+        lerpTable.put(2.74, 4.9);
 
         this.xbox = xbox;
         this.vision = vision;
@@ -188,20 +189,19 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO implement after filling lerp
-        // if (autoAdjustChooser.getSelected()) {
-        //     if (vision.getTagPoseX() != 0) {
-        //         hoodSetpoint = lerpTable.get(vision.getTagPoseX());
-        //     }
-        //     hoodMotor.setPosition(hoodSetpoint);
-        // } else {
-        //     if (xbox.rightBumper().getAsBoolean()) {
-        //         setHoodSpeed(0.4);
-        //     } else if (xbox.leftBumper().getAsBoolean()) {
-        //         setHoodSpeed(-0.4);
-        //     } else {
-        //         setHoodSpeed(0);
-        //     }
-        // }
+        if (autoAdjustChooser.getSelected()) {
+                hoodSetpoint = lerpTable.get(vision.latestShooterPos);
+            hoodMotor.setPosition(hoodSetpoint);
+        } else {
+            if (xbox.rightBumper().getAsBoolean()) {
+                setHoodSpeed(0.4);
+            } else if (xbox.leftBumper().getAsBoolean()) {
+                setHoodSpeed(-0.4);
+            } else {
+                setHoodSpeed(0);
+            }
+        }
+
         // update dashboard
         SmartDashboard.putNumber("Shooter speed", this.shooterMotor.getVelocity());
         SmartDashboard.putNumber("Shooter set speed", setSpeed);
