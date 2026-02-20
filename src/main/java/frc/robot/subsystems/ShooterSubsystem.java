@@ -33,10 +33,12 @@ public class ShooterSubsystem extends SubsystemBase {
     private final InterpolatingDoubleTreeMap lerpTable = new InterpolatingDoubleTreeMap();
 
     private double liveHoodOffset = 0;
+    private boolean zeroingHood = false;
 
     private double setSpeed = 0;
 
     private final SendableChooser<Boolean> autoAdjustChooser;
+    public boolean autoAdjusting = true;
 
     /** Constructor */
     public ShooterSubsystem(Vision vision, CommandXboxController xbox) {
@@ -131,6 +133,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command zeroHood() {
         return runEnd(() -> {
+            zeroingHood = true;
             hoodMotor.setVoltage(-0.7);
         }, () -> {
             hoodMotor.set(0);
@@ -140,9 +143,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command resetEncoder() {
         return runOnce(() -> {
-            Commands.sequence(
-                    Commands.waitSeconds(3));
+            // Commands.sequence(
+            // Commands.waitSeconds(3));
             hoodMotor.setEncoderPosition(0);
+            zeroingHood = false;
+            hoodMotor.setPosition(0);
         });
     }
 
@@ -186,19 +191,32 @@ public class ShooterSubsystem extends SubsystemBase {
         });
     }
 
+    public Command toggleAutoAdjust(){
+        return runOnce(()->{
+            if(autoAdjusting){
+                autoAdjusting = false;
+            } else {
+                autoAdjusting = true;
+            }
+        });
+    }
+
     @Override
     public void periodic() {
-        // TODO implement after filling lerp
-        if (autoAdjustChooser.getSelected()) {
-                hoodSetpoint = lerpTable.get(vision.latestShooterPos);
-            hoodMotor.setPosition(hoodSetpoint);
-        } else {
-            if (xbox.rightBumper().getAsBoolean()) {
-                setHoodSpeed(0.4);
-            } else if (xbox.leftBumper().getAsBoolean()) {
-                setHoodSpeed(-0.4);
+        if (!zeroingHood) {
+            if (autoAdjusting) {
+                if (vision.latestShooterPos != 0) {
+                    hoodSetpoint = lerpTable.get(vision.latestShooterPos);
+                    hoodMotor.setPosition(hoodSetpoint);
+                }
             } else {
-                setHoodSpeed(0);
+                if (xbox.rightBumper().getAsBoolean()) {
+                    hoodMotor.setPosition(hoodMotor.getPosition() + 0.35);
+                } else if (xbox.leftBumper().getAsBoolean()) {
+                    hoodMotor.setPosition(hoodMotor.getPosition() - 0.35);
+                } else {
+                    setHoodSpeed(0);
+                }
             }
         }
 
@@ -206,8 +224,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Shooter speed", this.shooterMotor.getVelocity());
         SmartDashboard.putNumber("Shooter set speed", setSpeed);
         SmartDashboard.putNumber("Hood encoder", hoodMotor.getPositionInternal());
-        SmartDashboard.putNumber("Hood encoder rotations?", hoodMotor.getPositionInternal() / (4096 / 25));
-        SmartDashboard.putNumber("Hood Goal Pos", setPos);// for lerp filling testing
+        SmartDashboard.putBoolean("Auto Adjusting", autoAdjusting);
 
     }
 }

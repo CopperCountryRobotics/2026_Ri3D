@@ -60,7 +60,7 @@ public class RobotContainer {
 
 
 		xbox.povDown().onTrue(intake.setIntake(0));
-		xbox.povUp().onTrue(intake.runIntake(IntakeConstants.INTAKE_SPEED));
+		xbox.povUp().onTrue(intake.setIntake(IntakeConstants.INTAKE_SPEED));
 		xbox.povRight().whileTrue(intake.extendOut());
 		xbox.povLeft().whileTrue(intake.extendIn());
 
@@ -71,6 +71,9 @@ public class RobotContainer {
 
 		//JOYSTICK BINDINGS
 		joystick.button(1).whileTrue(shooter.zeroHood()).onFalse(shooter.resetEncoder());
+		joystick.button(2).onTrue(swerve.resetGyro());
+		joystick.button(3).onTrue(shooter.toggleAutoAdjust());
+
 
 		joystick.button(7).onTrue(superstructure.setupExtension(3,0));
 	}

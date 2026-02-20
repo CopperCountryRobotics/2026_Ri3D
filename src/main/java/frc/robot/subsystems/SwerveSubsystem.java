@@ -82,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public double yaw = 0.0;
     private double speedMultiplier = 0.6;
 
-    private final PIDController turnController = new PIDController(0.3, 0, 0);
+    private final PIDController turnController = new PIDController(0.2, 0, 0);
     private final PIDController driveController = new PIDController(1.4, 0, 0);
 
     private final StructPublisher<Pose2d> swervePose = NetworkTableInstance.getDefault()
